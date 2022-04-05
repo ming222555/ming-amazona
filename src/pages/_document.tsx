@@ -1,10 +1,11 @@
-import * as React from 'react';
+import React from 'react';
 import Document, { Html, Head, Main, NextScript } from 'next/document';
 import createEmotionServer from '@emotion/server/create-instance';
-import theme from '../src/theme';
-import createEmotionCache from '../src/createEmotionCache';
+import theme from '../../src/theme';
+import createEmotionCache from '../../src/createEmotionCache';
 
 export default class MyDocument extends Document {
+  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
   render() {
     return (
       <Html lang="en">
@@ -12,11 +13,9 @@ export default class MyDocument extends Document {
           {/* PWA primary color */}
           <meta name="theme-color" content={theme.palette.primary.main} />
           <link rel="shortcut icon" href="/static/favicon.ico" />
-          <link
-            rel="stylesheet"
-            href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap"
-          />
+          <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" />
           {/* Inject MUI styles first to match with the prepend: true configuration. */}
+          {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
           {(this.props as any).emotionStyleTags}
         </Head>
         <body>
@@ -30,6 +29,7 @@ export default class MyDocument extends Document {
 
 // `getInitialProps` belongs to `_document` (instead of `_app`),
 // it's compatible with static-site generation (SSG).
+// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
 MyDocument.getInitialProps = async (ctx) => {
   // Resolution order
   //
@@ -59,10 +59,12 @@ MyDocument.getInitialProps = async (ctx) => {
   // However, be aware that it can have global side effects.
   const cache = createEmotionCache();
   const { extractCriticalToChunks } = createEmotionServer(cache);
-
+  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
   ctx.renderPage = () =>
     originalRenderPage({
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       enhanceApp: (App: any) =>
+        // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
         function EnhanceApp(props) {
           return <App emotionCache={cache} {...props} />;
         },
