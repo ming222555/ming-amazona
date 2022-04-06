@@ -6,6 +6,7 @@ import Box from '@mui/material/Box';
 // import Link from '../src/Link';
 // import ProTip from '../src/ProTip';
 // import Copyright from '../src/Copyright';
+import Layout from '../components/layouts/Layout';
 
 const Home: NextPage = () => {
   return (
@@ -22,6 +23,7 @@ const Home: NextPage = () => {
         <Typography variant="h4" component="h1" gutterBottom>
           MUI v5 + Next.js with TypeScript example
         </Typography>
+        <Layout />
         {/* <Link href="/about" color="secondary">
           Go to the about page
         </Link> */}
