@@ -18,6 +18,7 @@ module.exports = {
     '@typescript-eslint/explicit-function-return-type': 'off',
     '@typescript-eslint/no-unused-vars': 'off',
     'no-console': 'off',
+    'prettier/prettier': ['error', { endOfLine: 'auto' }],
   },
   overrides: [
     {
