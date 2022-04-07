@@ -9,9 +9,9 @@ import CardActions from '@mui/material/CardActions';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 
-import Layout from '../Layout';
+import Link from '../components/Link';
+import Layout from '../components/Layout';
 import data from '../utils/data';
-import Link from '../Link';
 
 const Home: NextPage = () => {
   return (

@@ -2,8 +2,8 @@ import React from 'react';
 import Head from 'next/head';
 import Container from '@mui/material/Container';
 
-import Header from './layout/Header';
-import Footer from './layout/Footer';
+import Header from './Header';
+import Footer from './Footer';
 
 export default function Layout(props: { children: JSX.Element }): JSX.Element {
   return (

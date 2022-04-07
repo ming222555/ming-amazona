@@ -6,7 +6,7 @@ import { styled, useTheme } from '@mui/material/styles';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 
-import Link from '../Link';
+import Link from '../components/Link';
 
 const PREFIX = 'Header';
 
