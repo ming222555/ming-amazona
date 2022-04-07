@@ -5,11 +5,11 @@ import Container from '@mui/material/Container';
 import Header from './Header';
 import Footer from './Footer';
 
-export default function Layout(props: { children: JSX.Element }): JSX.Element {
+export default function Layout(props: { children: JSX.Element; title?: string }): JSX.Element {
   return (
     <div>
       <Head>
-        <title>Next Amazona</title>
+        <title>{props.title ? `${props.title} - Next Amazona` : 'Next Amazona'}</title>
       </Head>
       <Header />
       <Container component="main" style={{ minHeight: '80vh' }}>

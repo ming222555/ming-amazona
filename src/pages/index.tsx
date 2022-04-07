@@ -22,7 +22,7 @@ const Home: NextPage = () => {
           {data.products.map((p) => (
             <Grid item md={4} key={p.name}>
               <Card>
-                <Link href={`/product/${p.slug}`} underline="none">
+                <Link href={`/product/${p.slug}`}>
                   <CardActionArea>
                     <CardMedia component="img" image={p.image} title={p.name} />
                     <CardContent>

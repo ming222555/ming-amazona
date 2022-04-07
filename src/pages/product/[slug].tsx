@@ -2,6 +2,8 @@ import React from 'react';
 import type { NextPage } from 'next';
 import { useRouter } from 'next/router';
 
+import Link from '../../components/Link';
+import Layout from '../../components/Layout';
 import data from '../../utils/data';
 
 const ProductPage: NextPage = () => {
@@ -12,9 +14,11 @@ const ProductPage: NextPage = () => {
     return <div>Product Not Found</div>;
   }
   return (
-    <div>
-      <h1>{product.name}</h1>
-    </div>
+    <Layout title={product.name}>
+      <div>
+        <Link href="/">back to products</Link>
+      </div>
+    </Layout>
   );
 };
 

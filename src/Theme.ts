@@ -78,6 +78,15 @@ export default createTheme({
       fontSize: '1.5rem',
     },
   },
+  components: {
+    MuiLink: {
+      styleOverrides: {
+        root: {
+          textDecoration: 'none',
+        },
+      },
+    },
+  },
 });
 /* 
 let theme = createTheme({
