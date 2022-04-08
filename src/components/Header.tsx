@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React /* , { useState } */ from 'react';
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
@@ -28,11 +28,11 @@ const StyledAppBar = styled(AppBar)(({ theme }) => ({
 export default function Header(): JSX.Element {
   const theme = useTheme();
 
-  const [value, setValue] = useState(-1);
+  // const [value, setValue] = useState(0);
 
-  const handleChange = (e: React.SyntheticEvent<Element, Event>, value: number): void => {
-    setValue(value);
-  };
+  // const handleChange = (e: React.SyntheticEvent<Element, Event>, value: number): void => {
+  //   setValue(value);
+  // };
 
   return (
     <StyledAppBar position="static" className={`${PREFIX}-navbar`}>
@@ -41,7 +41,7 @@ export default function Header(): JSX.Element {
           <Typography style={{ ...theme.typography.brand }}>amazona</Typography>
         </Link>
         <div className={`${PREFIX}-navbar__middle`}>&nbsp;</div>
-        <Tabs value={value} onChange={handleChange} indicatorColor="primary">
+        <Tabs /* value={value} onChange={handleChange} indicatorColor="primary" */>
           <Tab component={Link} href="/cart" label="Cart" className={`${PREFIX}-navbar__tab`} disableRipple />
           <Tab component={Link} href="/login" label="Login" className={`${PREFIX}-navbar__tab`} disableRipple />
         </Tabs>
