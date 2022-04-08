@@ -16,5 +16,6 @@ declare module '@mui/material/styles/createPalette' {
   interface CommonColors {
     blue: string;
     orange: string;
+    grey: string;
   }
 }

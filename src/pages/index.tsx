@@ -8,16 +8,19 @@ import CardContent from '@mui/material/CardContent';
 import CardActions from '@mui/material/CardActions';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
+import { useTheme } from '@mui/material/styles';
 
 import Link from '../components/Link';
 import Layout from '../components/Layout';
 import data from '../utils/data';
 
 const Home: NextPage = () => {
+  const theme = useTheme();
+
   return (
     <Layout>
       <div>
-        <h1>Products</h1>
+        <h1 style={{ color: theme.palette.primary.main }}>Products</h1>
         <Grid container spacing={3}>
           {data.products.map((p) => (
             <Grid item md={4} key={p.name}>

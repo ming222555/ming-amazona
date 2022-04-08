@@ -36,8 +36,10 @@ const ProductPage: NextPage = () => {
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src="/images/backArrow.svg" alt="back to landing page" />
           </IconButton>
-          <Link href="/" color="primary">
-            <Typography component="span">back to products</Typography>
+          <Link href="/">
+            <Typography component="span" color="primary">
+              back to products
+            </Typography>
           </Link>
         </StyledTopSection>
         <Grid container spacing={1}>
@@ -47,7 +49,7 @@ const ProductPage: NextPage = () => {
           <Grid item md={3} xs={12}>
             <List>
               <ListItem>
-                <Typography component="h1">{product.name}</Typography>
+                <Typography variant="h1">{product.name}</Typography>
               </ListItem>
               <ListItem>
                 <Typography>Category: {product.category}</Typography>

@@ -1,13 +1,14 @@
 import { createTheme /* , responsiveFontSizes */ } from '@mui/material/styles';
 import { red } from '@mui/material/colors';
 
-import { arcBlue, arcOrange /* arcGrey */ } from './colors';
+import { arcBlue, arcOrange, arcGrey } from './colors';
 
 export default createTheme({
   palette: {
     common: {
       blue: arcBlue,
       orange: arcOrange,
+      grey: arcGrey,
     },
     primary: {
       main: arcBlue,
@@ -20,13 +21,20 @@ export default createTheme({
     },
   },
   typography: {
-    //   h1: {
-    //     fontFamily: "Raleway",
-    //     fontWeight: 700,
-    //     fontSize: "2.5rem",
-    //     color: arcBlue,
-    //     lineHeight: 1.5,
-    //   },
+    h1: {
+      fontSize: '1.6rem',
+      fontWeight: 400,
+      margin: '1rem 0',
+      // lineHeight: 1.5,
+      color: arcBlue,
+    },
+    h2: {
+      fontSize: '1.4rem',
+      fontWeight: 400,
+      margin: '1rem 0',
+      color: arcBlue,
+      // lineHeight: 1.5,
+    },
     //   h3: {
     //     fontFamily: "Pacifico",
     //     fontSize: "2.5rem",
@@ -44,21 +52,21 @@ export default createTheme({
     //     color: arcBlue,
     //     lineHeight: 1,
     //   },
-    //   subtitle1: {
-    //     fontSize: "1.25rem",
-    //     fontWeight: 300,
-    //     color: arcGrey,
-    //   },
+    // subtitle1: {
+    //   fontSize: '1.25rem',
+    //   fontWeight: 300,
+    //   color: arcGrey,
+    // },
     //   subtitle2: {
     //     color: "white",
     //     fontWeight: 300,
     //     fontSize: "1.25rem",
     //   },
-    //   body1: {
-    //     fontSize: "1.25rem",
-    //     color: arcGrey,
-    //     fontWeight: 300,
-    //   },
+    body1: {
+      fontSize: '1.25rem',
+      color: arcGrey,
+      fontWeight: 300,
+    },
     //   caption: {
     //     fontSize: "1rem",
     //     color: arcGrey,
