@@ -19,6 +19,7 @@ module.exports = {
     '@typescript-eslint/no-unused-vars': 'off',
     'no-console': 'off',
     'prettier/prettier': ['error', { endOfLine: 'auto' }],
+    '@next/next/no-img-element': 'off',
   },
   overrides: [
     {
@@ -27,6 +28,7 @@ module.exports = {
         '@typescript-eslint/explicit-function-return-type': ['error'],
         '@typescript-eslint/no-unused-vars': ['error'],
         'no-console': ['error'],
+        '@next/next/no-img-element': ['warn'],
       },
     },
   ],

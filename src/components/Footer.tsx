@@ -3,7 +3,7 @@ import Typography from '@mui/material/Typography';
 
 export default function Footer(): JSX.Element {
   return (
-    <footer style={{ textAlign: 'center' }}>
+    <footer style={{ marginTop: 10, textAlign: 'center' }}>
       <Typography>All rights reserved. Next Amazona.</Typography>
     </footer>
   );
