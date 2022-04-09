@@ -1,7 +1,9 @@
 import { createTheme /* , responsiveFontSizes */ } from '@mui/material/styles';
 import { red } from '@mui/material/colors';
 
-import { arcBlue, arcOrange, arcGrey } from './colors';
+const arcBlue = '#0B72B9';
+const arcOrange = '#FFBA60';
+const arcGrey = '#868686';
 
 export default createTheme({
   palette: {
@@ -10,9 +12,10 @@ export default createTheme({
       orange: arcOrange,
       grey: arcGrey,
     },
-    primary: {
-      main: arcBlue,
-    },
+    mode: 'dark',
+    // primary: {
+    //   main: arcBlue, // comment color key, o/w light.dark.mode no effect on the color here
+    // },
     secondary: {
       main: arcOrange,
     },
@@ -26,13 +29,13 @@ export default createTheme({
       fontWeight: 400,
       margin: '1rem 0',
       // lineHeight: 1.5,
-      color: arcBlue,
+      // color: arcBlue, // comment color key, o/w light.dark.mode no effect on the color here
     },
     h2: {
       fontSize: '1.4rem',
       fontWeight: 400,
       margin: '1rem 0',
-      color: arcBlue,
+      // color: arcBlue, // comment color key, o/w light.dark.mode no effect on the color here
       // lineHeight: 1.5,
     },
     //   h3: {
@@ -64,7 +67,7 @@ export default createTheme({
     //   },
     body1: {
       fontSize: '1.25rem',
-      color: arcGrey,
+      // color: arcGrey, // comment color key, o/w light.dark.mode no effect on the color here
       fontWeight: 300,
     },
     //   caption: {
