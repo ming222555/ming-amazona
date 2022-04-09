@@ -4,11 +4,11 @@ import { AppProps } from 'next/app';
 // import { ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import { CacheProvider, EmotionCache } from '@emotion/react';
-import theme from '../Theme';
 import createEmotionCache from '../../src/createEmotionCache';
 
-import { StoreProvider } from '../utils/Store';
-import ThemeAdjust from '../ThemeAdjust';
+// import theme from '../Theme';
+import { StateContextProvider } from '../utils/StateContext';
+import ThemeModeAdjust from '../ThemeModeAdjust';
 
 // Client-side cache, shared for the whole session of the user in the browser.
 const clientSideEmotionCache = createEmotionCache();
@@ -29,14 +29,12 @@ export default function MyApp(props: MyAppProps) {
         <CssBaseline />
         <Component {...pageProps} />
       </ThemeProvider> */}
-      <StoreProvider>
-        <ThemeAdjust theme={theme}>
-          <>
-            <CssBaseline />
-            <Component {...pageProps} />
-          </>
-        </ThemeAdjust>
-      </StoreProvider>
+      <StateContextProvider>
+        <ThemeModeAdjust>
+          <CssBaseline />
+          <Component {...pageProps} />
+        </ThemeModeAdjust>
+      </StateContextProvider>
     </CacheProvider>
   );
 }

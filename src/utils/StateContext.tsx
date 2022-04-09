@@ -7,10 +7,10 @@ interface IFState {
 interface IFAction {
   type: string;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  payload: any;
+  payload?: any;
 }
 
-interface StoreValue {
+interface IFStateContextValue {
   state: IFState;
   dispatch: React.Dispatch<IFAction>;
 }
@@ -30,12 +30,12 @@ function reducer(state: IFState, action: IFAction): IFState {
   }
 }
 
-export const Store = createContext<StoreValue>({
+export const StateContext = createContext<IFStateContextValue>({
   state: initialState,
   dispatch: (action: IFAction) => reducer(initialState, action),
 });
 
-export function StoreProvider(props: { children: JSX.Element }): JSX.Element {
+export function StateContextProvider(props: { children: JSX.Element }): JSX.Element {
   const [state, dispatch] = useReducer(reducer, initialState);
-  return <Store.Provider value={{ state, dispatch }}>{props.children}</Store.Provider>;
+  return <StateContext.Provider value={{ state, dispatch }}>{props.children}</StateContext.Provider>;
 }

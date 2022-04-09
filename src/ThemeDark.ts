@@ -10,7 +10,7 @@ export default createTheme({
       orange: arcOrange,
       grey: arcGrey,
     },
-    mode: 'light',
+    mode: 'dark',
     // primary: {
     //   main: arcBlue, // comment color key, o/w light.dark.mode no effect on the color here
     // },
