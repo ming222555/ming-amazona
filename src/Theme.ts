@@ -11,9 +11,9 @@ export default createTheme({
       grey: arcGrey,
     },
     mode: 'light',
-    // primary: {
-    //   main: arcBlue, // comment color key, o/w light.dark.mode no effect on the color here
-    // },
+    primary: {
+      main: arcBlue, // comment color key, o/w light.dark.mode no effect on the color here
+    },
     secondary: {
       main: arcOrange,
     },
@@ -65,7 +65,7 @@ export default createTheme({
     //   },
     body1: {
       fontSize: '1.25rem',
-      // color: arcGrey, // comment color key, o/w light.dark.mode no effect on the color here
+      color: arcGrey, // comment color key, o/w light.dark.mode no effect on the color here
       fontWeight: 300,
     },
     //   caption: {
