@@ -18,8 +18,7 @@ interface IFStateContextValue {
 }
 
 const initialState = {
-  darkMode: typeof window === 'undefined' ? false : Cookies.get('darkMode') === 'ON' ? true : false,
-  // darkMode: false,
+  darkMode: false,
 };
 
 function reducer(state: IFState, action: IFAction): IFState {

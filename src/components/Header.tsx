@@ -1,4 +1,4 @@
-import React, { useContext /* , { useState } */ } from 'react';
+import React, { useContext, useEffect, useRef } from 'react';
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
@@ -48,6 +48,19 @@ export default function Header(): JSX.Element {
   // const handleChange = (e: React.SyntheticEvent<Element, Event>, value: number): void => {
   //   setValue(value);
   // };
+
+  const hasMount = useRef(false);
+
+  useEffect(() => {
+    if (!hasMount.current) {
+      hasMount.current = true;
+
+      const szSarkMode = Cookies.get('darkMode');
+      if (szSarkMode === 'ON') {
+        dispatch({ type: 'DARK_MODE_ON' });
+      }
+    }
+  }, [dispatch]);
 
   return (
     <StyledAppBar position="static" className={`${PREFIX}-navbar`}>
