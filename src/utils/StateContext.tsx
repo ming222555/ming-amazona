@@ -1,5 +1,7 @@
 import React, { createContext, useReducer } from 'react';
 
+import Cookies from 'js-cookie';
+
 interface IFState {
   darkMode: boolean;
 }
@@ -16,7 +18,8 @@ interface IFStateContextValue {
 }
 
 const initialState = {
-  darkMode: false,
+  darkMode: typeof window === 'undefined' ? false : Cookies.get('darkMode') === 'ON' ? true : false,
+  // darkMode: false,
 };
 
 function reducer(state: IFState, action: IFAction): IFState {

@@ -10,6 +10,8 @@ import Switch from '@mui/material/Switch';
 import Link from '../components/Link';
 import { StateContext } from '../utils/StateContext';
 
+import Cookies from 'js-cookie';
+
 const PREFIX = 'Header';
 
 const StyledAppBar = styled(AppBar)(({ theme }) => ({
@@ -35,9 +37,11 @@ export default function Header(): JSX.Element {
   const darkModeChangeHandler = (event: React.ChangeEvent<HTMLInputElement>, checked: boolean): void => {
     if (checked) {
       dispatch({ type: 'DARK_MODE_ON' });
+      Cookies.set('darkMode', 'ON');
       return;
     }
     dispatch({ type: 'DARK_MODE_OFF' });
+    Cookies.set('darkMode', 'OFF');
   };
 
   // const [value, setValue] = useState(0);
