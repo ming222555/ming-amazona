@@ -1,7 +1,5 @@
 import React, { createContext, useReducer } from 'react';
 
-import Cookies from 'js-cookie';
-
 interface IFState {
   darkMode: boolean;
 }

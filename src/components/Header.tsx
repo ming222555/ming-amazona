@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useRef } from 'react';
+import React, { useContext /* , { useState } */ } from 'react';
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
@@ -9,8 +9,6 @@ import Switch from '@mui/material/Switch';
 
 import Link from '../components/Link';
 import { StateContext } from '../utils/StateContext';
-
-import Cookies from 'js-cookie';
 
 const PREFIX = 'Header';
 
@@ -37,30 +35,15 @@ export default function Header(): JSX.Element {
   const darkModeChangeHandler = (event: React.ChangeEvent<HTMLInputElement>, checked: boolean): void => {
     if (checked) {
       dispatch({ type: 'DARK_MODE_ON' });
-      Cookies.set('darkMode', 'ON');
       return;
     }
     dispatch({ type: 'DARK_MODE_OFF' });
-    Cookies.set('darkMode', 'OFF');
   };
 
   // const [value, setValue] = useState(0);
   // const handleChange = (e: React.SyntheticEvent<Element, Event>, value: number): void => {
   //   setValue(value);
   // };
-
-  const hasMount = useRef(false);
-
-  useEffect(() => {
-    if (!hasMount.current) {
-      hasMount.current = true;
-
-      const szSarkMode = Cookies.get('darkMode');
-      if (szSarkMode === 'ON') {
-        dispatch({ type: 'DARK_MODE_ON' });
-      }
-    }
-  }, [dispatch]);
 
   return (
     <StyledAppBar position="static" className={`${PREFIX}-navbar`}>

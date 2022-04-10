@@ -54,7 +54,7 @@ MyDocument.getInitialProps = async (ctx) => {
   // 4. page.render
 
   const originalRenderPage = ctx.renderPage;
-  /* https://stackoverflow.com/questions/71074936/nextjs-material-ui-manually-refreshing-causes-warning-prop-classname-did */
+
   // You can consider sharing the same emotion cache between all the SSR requests to speed up performance.
   // However, be aware that it can have global side effects.
   const cache = createEmotionCache();
