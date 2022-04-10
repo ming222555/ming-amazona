@@ -14,7 +14,7 @@ import { styled } from '@mui/material/styles';
 
 import Link from '../../components/Link';
 import Layout from '../../components/Layout';
-import data from '../../utils/data';
+import data from '../../db/data';
 
 const StyledTopSection = styled('section')({
   marginTop: 10,
