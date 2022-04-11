@@ -12,7 +12,7 @@ import { useTheme } from '@mui/material/styles';
 
 import Link from '../components/Link';
 import Layout from '../components/Layout';
-import data from '../db/data';
+import data from '../db/seeddata';
 
 const Home: NextPage = () => {
   const theme = useTheme();

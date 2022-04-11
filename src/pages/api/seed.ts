@@ -2,7 +2,7 @@ import { NextApiRequest, NextApiResponse } from 'next';
 import nc from 'next-connect';
 import Product from '../../db/models/Product';
 import db from '../../db/db';
-import data from '../../db/data';
+import data from '../../db/seeddata';
 
 // https://stackoverflow.com/questions/67009540/property-status-does-not-exist-on-type-serverresponse-ts2339
 const handler = nc<NextApiRequest, NextApiResponse>({
