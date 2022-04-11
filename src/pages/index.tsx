@@ -13,6 +13,9 @@ import { useTheme } from '@mui/material/styles';
 import Link from '../components/Link';
 import Layout from '../components/Layout';
 import data from '../db/seeddata';
+import db from '../db/db';
+import Product from '../db/models/Product';
+import { IFProduct } from '../db/rdbms_tbl_cols';
 
 const Home: NextPage = () => {
   const theme = useTheme();
@@ -47,5 +50,22 @@ const Home: NextPage = () => {
     </Layout>
   );
 };
+
+interface RetProps {
+  props: {
+    products: IFProduct[];
+  };
+}
+
+export async function getServerSideProps(): Promise<RetProps> {
+  await db.connect();
+  const products = await Product.find({});
+  await db.disconnect();
+  return {
+    props: {
+      products,
+    },
+  };
+}
 
 export default Home;

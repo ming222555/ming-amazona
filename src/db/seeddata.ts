@@ -1,26 +1,6 @@
 import bcrypt from 'bcryptjs';
 
-interface IFUser {
-  name: string;
-  email: string;
-  password: string;
-  isAdmin: boolean;
-}
-
-interface IFProduct {
-  name: string;
-  slug: string;
-  category: string;
-  image: string;
-  isFeatured?: boolean;
-  featuredImage?: string;
-  price: number;
-  brand: string;
-  rating: number;
-  numReviews: number;
-  countInStock: number;
-  description: string;
-}
+import { IFUser, IFProduct } from './rdbms_tbl_cols';
 
 const users: IFUser[] = [
   {
@@ -71,6 +51,8 @@ const products: IFProduct[] = [
     slug: 'slim-shirt',
     category: 'Shirts',
     image: '/images/shirt3.jpg',
+    isFeatured: false,
+    featuredImage: '',
     price: 90,
     brand: 'Raymond',
     rating: 4.5,
@@ -83,6 +65,8 @@ const products: IFProduct[] = [
     slug: 'golf-pants',
     category: 'Pants',
     image: '/images/pants1.jpg',
+    isFeatured: false,
+    featuredImage: '',
     price: 90,
     brand: 'Oliver',
     rating: 4.5,
@@ -95,6 +79,8 @@ const products: IFProduct[] = [
     slug: 'fit-pants',
     category: 'Pants',
     image: '/images/pants2.jpg',
+    isFeatured: false,
+    featuredImage: '',
     price: 95,
     brand: 'Zara',
     rating: 4.5,
@@ -107,6 +93,8 @@ const products: IFProduct[] = [
     slug: 'classic-pants',
     category: 'Pants',
     image: '/images/pants3.jpg',
+    isFeatured: false,
+    featuredImage: '',
     price: 75,
     brand: 'Casely',
     rating: 4.5,
