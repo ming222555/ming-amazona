@@ -41,4 +41,5 @@ yarn-error.log*
 goog.txt
 misc.txt
 .env
-mongo.exe.lnk
+mongobin.lnk
+mongodexe.lnk
