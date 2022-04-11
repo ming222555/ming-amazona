@@ -17,7 +17,9 @@ const users: IFUser[] = [
   },
 ];
 
-const products: IFProduct[] = [
+type IFProductWithoutMongo = Omit<IFProduct, '_id' | 'createdAt' | 'updatedAt'>;
+
+const products: IFProductWithoutMongo[] = [
   {
     name: 'Free Shirt',
     slug: 'free-shirt',

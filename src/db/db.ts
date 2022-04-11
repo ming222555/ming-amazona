@@ -42,5 +42,13 @@ async function disconnect(): Promise<void> {
   }
 }
 
-const db = { connect, disconnect };
+// doc is a mongo document.
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function convertDocToObj(doc: any): void {
+  doc._id = doc._id.toString();
+  doc.createdAt = doc.createdAt.toString();
+  doc.updatedAt = doc.updatedAt.toString();
+}
+
+const db = { connect, disconnect, convertDocToObj };
 export default db;

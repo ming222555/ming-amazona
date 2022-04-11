@@ -12,12 +12,16 @@ import { useTheme } from '@mui/material/styles';
 
 import Link from '../components/Link';
 import Layout from '../components/Layout';
-import data from '../db/seeddata';
 import db from '../db/db';
 import Product from '../db/models/Product';
 import { IFProduct } from '../db/rdbms_tbl_cols';
 
-const Home: NextPage = () => {
+interface Props {
+  products: IFProduct[];
+}
+
+// https://github.com/yannickcr/eslint-plugin-react/issues/2353
+const Home: NextPage<Props> = ({ products }: Props) => {
   const theme = useTheme();
 
   return (
@@ -25,7 +29,7 @@ const Home: NextPage = () => {
       <div>
         <h1 style={{ color: theme.palette.primary.main }}>Products</h1>
         <Grid container spacing={3}>
-          {data.products.map((p) => (
+          {products.map((p) => (
             <Grid item md={4} key={p.name}>
               <Card>
                 <Link href={`/product/${p.slug}`}>
@@ -51,15 +55,10 @@ const Home: NextPage = () => {
   );
 };
 
-interface RetProps {
-  props: {
-    products: IFProduct[];
-  };
-}
-
-export async function getServerSideProps(): Promise<RetProps> {
+export async function getServerSideProps(): Promise<{ props: Props }> {
   await db.connect();
-  const products = await Product.find({});
+  const products = (await Product.find({}).lean()) as IFProduct[];
+  products.forEach(db.convertDocToObj);
   await db.disconnect();
   return {
     props: {
