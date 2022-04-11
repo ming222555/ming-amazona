@@ -6,6 +6,8 @@ import db from '../../../db/db';
 // https://stackoverflow.com/questions/67009540/property-status-does-not-exist-on-type-serverresponse-ts2339
 const handler = nc<NextApiRequest, NextApiResponse>({
   onError(error, req, res) {
+    // eslint-disable-next-line no-console
+    console.log('db error');
     res.status(501).json({ error: `Sorry something Happened! ${error.message}` });
   },
   onNoMatch(req, res) {

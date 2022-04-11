@@ -1,7 +1,6 @@
 import React from 'react';
-import type { NextPage } from 'next';
+import type { NextPage, GetServerSideProps } from 'next';
 import Image from 'next/image';
-import { useRouter } from 'next/router';
 import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 import Grid from '@mui/material/Grid';
@@ -14,17 +13,20 @@ import { styled } from '@mui/material/styles';
 
 import Link from '../../components/Link';
 import Layout from '../../components/Layout';
-import data from '../../db/seeddata';
+import db from '../../db/db';
+import Product from '../../db/models/Product';
+import { IFProduct } from '../../db/rdbms_tbl_cols';
 
 const StyledTopSection = styled('section')({
   marginTop: 10,
   marginBottom: 10,
 });
 
-const ProductPage: NextPage = () => {
-  const router = useRouter();
-  const { slug } = router.query;
-  const product = data.products.find((p) => p.slug === slug);
+interface Props {
+  product: IFProduct;
+}
+
+const ProductPage: NextPage<Props> = ({ product }: Props) => {
   if (!product) {
     return <div>Product Not Found</div>;
   }
@@ -102,6 +104,20 @@ const ProductPage: NextPage = () => {
       </div>
     </Layout>
   );
+};
+
+export const getServerSideProps: GetServerSideProps<Props> = async (context) => {
+  const slug = context.params?.slug;
+
+  await db.connect();
+  const product = (await Product.findOne({ slug }).lean()) as IFProduct;
+  db.convertDocToObj(product);
+  await db.disconnect();
+  return {
+    props: {
+      product,
+    },
+  };
 };
 
 export default ProductPage;

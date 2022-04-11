@@ -1,5 +1,5 @@
 import React from 'react';
-import type { NextPage } from 'next';
+import type { NextPage, GetServerSideProps } from 'next';
 import Grid from '@mui/material/Grid';
 import Card from '@mui/material/Card';
 import CardActionArea from '@mui/material/CardActionArea';
@@ -55,7 +55,7 @@ const Home: NextPage<Props> = ({ products }: Props) => {
   );
 };
 
-export async function getServerSideProps(): Promise<{ props: Props }> {
+export const getServerSideProps: GetServerSideProps<Props> = async () => {
   await db.connect();
   const products = (await Product.find({}).lean()) as IFProduct[];
   products.forEach(db.convertDocToObj);
@@ -65,6 +65,6 @@ export async function getServerSideProps(): Promise<{ props: Props }> {
       products,
     },
   };
-}
+};
 
 export default Home;
