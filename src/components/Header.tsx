@@ -1,4 +1,4 @@
-import React, { useContext /* , { useState } */ } from 'react';
+import React, { useContext, useRef, useEffect } from 'react';
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
@@ -6,9 +6,13 @@ import { styled, useTheme } from '@mui/material/styles';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import Switch from '@mui/material/Switch';
+import Badge from '@mui/material/Badge';
+
+import Cookies from 'js-cookie';
 
 import Link from '../components/Link';
 import { StateContext } from '../utils/StateContext';
+import { IFCartItem } from '../db/rdbms_tbl_cols';
 
 const PREFIX = 'Header';
 
@@ -27,10 +31,14 @@ const StyledAppBar = styled(AppBar)(({ theme }) => ({
   },
 }));
 
+function getCartQuantity(total = 0, cartItem: IFCartItem): number {
+  return total + cartItem.quantity;
+}
+
 export default function Header(): JSX.Element {
   const theme = useTheme();
   const { state, dispatch } = useContext(StateContext);
-  const { darkMode } = state;
+  const { darkMode, cart } = state;
 
   const darkModeChangeHandler = (event: React.ChangeEvent<HTMLInputElement>, checked: boolean): void => {
     if (checked) {
@@ -45,6 +53,22 @@ export default function Header(): JSX.Element {
   //   setValue(value);
   // };
 
+  const hasMount = useRef(false);
+
+  useEffect(() => {
+    if (!hasMount.current) {
+      hasMount.current = true;
+
+      const szCookieCartItems = Cookies.get('cartItems');
+
+      if (szCookieCartItems) {
+        dispatch({ type: 'SET_CART_ITEMS', payload: JSON.parse(szCookieCartItems) });
+      } else {
+        dispatch({ type: 'SET_CART_ITEMS', payload: [] });
+      }
+    }
+  }, [dispatch]);
+
   return (
     <StyledAppBar position="static" className={`${PREFIX}-navbar`}>
       <Toolbar>
@@ -56,7 +80,18 @@ export default function Header(): JSX.Element {
         <Switch checked={darkMode} onChange={darkModeChangeHandler}></Switch>
         {/* indicatorColor overriden to transparent at Theme.ts */}
         <Tabs value={0} /* value={value} onChange={handleChange} indicatorColor="secondary" */>
-          <Tab component={Link} href="/cart" label="Cart" className={`${PREFIX}-navbar__tab`} disableRipple />
+          {/* <Tab component={Link} href="/cart" label="Cart" className={`${PREFIX}-navbar__tab`} disableRipple /> */}
+          <Tab
+            component={Link}
+            href="/cart"
+            label={
+              <Badge badgeContent={cart.cartItems.reduce(getCartQuantity, 0)} color="secondary">
+                Cart
+              </Badge>
+            }
+            className={`${PREFIX}-navbar__tab`}
+            disableRipple
+          />
           <Tab component={Link} href="/login" label="Login" className={`${PREFIX}-navbar__tab`} disableRipple />
         </Tabs>
       </Toolbar>

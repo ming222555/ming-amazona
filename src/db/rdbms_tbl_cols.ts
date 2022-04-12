@@ -23,3 +23,7 @@ export interface IFProduct {
   createdAt: string;
   updatedAt: string;
 }
+
+export interface IFCartItem extends IFProduct {
+  quantity: number;
+}
