@@ -11,7 +11,7 @@ import Badge from '@mui/material/Badge';
 import Cookies from 'js-cookie';
 
 import Link from '../components/Link';
-import { StateContext } from '../utils/StateContext';
+import StateContext from '../utils/StateContext';
 import { IFCartItem } from '../db/rdbms_tbl_cols';
 
 const PREFIX = 'Header';

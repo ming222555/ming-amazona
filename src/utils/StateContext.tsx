@@ -36,7 +36,7 @@ function reducer(state: IFState, action: IFAction): IFState {
       if (!existItem) {
         const cartItems = [...state.cart.cartItems, newItem];
         cookieSet('cartItems', cartItems);
-        return { ...state, cart: { cartItems } };
+        return { ...state, cart: { ...state.cart, cartItems } };
       }
 
       const newItemDup: IFCartItem = { ...newItem, quantity: existItem.quantity + newItem.quantity };
@@ -45,7 +45,7 @@ function reducer(state: IFState, action: IFAction): IFState {
       cartItemsDup[existItemPos] = newItemDup;
 
       cookieSet('cartItems', cartItemsDup);
-      return { ...state, cart: { cartItems: cartItemsDup } };
+      return { ...state, cart: { ...state.cart, cartItems: cartItemsDup } };
     case 'SET_CART_ITEMS':
       const cartItems: IFCartItem[] = action.payload;
       return { ...state, cart: { ...state.cart, cartItems } };
@@ -54,7 +54,7 @@ function reducer(state: IFState, action: IFAction): IFState {
   }
 }
 
-export const StateContext = createContext<IFStateContextValue>({
+const StateContext = createContext<IFStateContextValue>({
   state: initialState,
   dispatch: (action: IFAction) => reducer(initialState, action),
 });
@@ -63,3 +63,5 @@ export function StateContextProvider(props: { children: JSX.Element }): JSX.Elem
   const [state, dispatch] = useReducer(reducer, initialState);
   return <StateContext.Provider value={{ state, dispatch }}>{props.children}</StateContext.Provider>;
 }
+
+export default StateContext;

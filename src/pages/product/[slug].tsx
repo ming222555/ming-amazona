@@ -17,7 +17,7 @@ import Layout from '../../components/Layout';
 import db from '../../db/db';
 import Product from '../../db/models/Product';
 import { IFProduct } from '../../db/rdbms_tbl_cols';
-import { StateContext } from '../../utils/StateContext';
+import StateContext from '../../utils/StateContext';
 
 const StyledTopSection = styled('section')({
   marginTop: 10,

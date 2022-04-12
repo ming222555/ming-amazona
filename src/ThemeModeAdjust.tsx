@@ -1,7 +1,7 @@
 import React, { useContext } from 'react';
 import { ThemeProvider } from '@mui/material/styles';
 
-import { StateContext } from './utils/StateContext';
+import StateContext from './utils/StateContext';
 import defaultTheme from './Theme';
 import themeDark from './ThemeDark';
 
