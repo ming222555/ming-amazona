@@ -5,7 +5,11 @@ import Container from '@mui/material/Container';
 import Header from './Header';
 import Footer from './Footer';
 
-export default function Layout(props: { children: JSX.Element; title?: string; description?: string }): JSX.Element {
+export default function Layout(props: {
+  children: React.ReactNode;
+  title?: string;
+  description?: string;
+}): JSX.Element {
   return (
     <div>
       <Head>

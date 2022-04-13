@@ -1,5 +1,6 @@
 import React, { useContext } from 'react';
 import type { NextPage, GetServerSideProps } from 'next';
+import { useRouter } from 'next/router';
 import Image from 'next/image';
 import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
@@ -29,6 +30,7 @@ interface Props {
 }
 
 const ProductPage: NextPage<Props> = ({ product }: Props) => {
+  const router = useRouter();
   const { dispatch } = useContext(StateContext);
   if (!product) {
     return <div>Product Not Found</div>;
@@ -41,6 +43,7 @@ const ProductPage: NextPage<Props> = ({ product }: Props) => {
       return;
     }
     dispatch({ type: 'CART_ADD_ITEM', payload: { ...product, quantity: 1 } });
+    router.push('/cart');
   };
 
   return (
