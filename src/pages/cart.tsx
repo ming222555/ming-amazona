@@ -1,5 +1,6 @@
 import React, { useContext } from 'react';
 import type { NextPage } from 'next';
+import { useRouter } from 'next/router';
 import Image from 'next/image';
 import Typography from '@mui/material/Typography';
 import Grid from '@mui/material/Grid';
@@ -38,6 +39,7 @@ function numList(num: number): JSX.Element[] {
 }
 
 const CartPage: NextPage = () => {
+  const router = useRouter();
   const { state, dispatch } = useContext(StateContext);
   const {
     cart: { cartItems },
@@ -54,6 +56,10 @@ const CartPage: NextPage = () => {
 
   function removeItemHandler(id: string): void {
     dispatch({ type: 'CART_REMOVE_ITEM', payload: id });
+  }
+
+  function checkoutHandler(): void {
+    router.push('/shipping');
   }
 
   return (
@@ -122,7 +128,7 @@ const CartPage: NextPage = () => {
                   </Typography>
                 </ListItem>
                 <ListItem>
-                  <Button variant="contained" color="secondary" fullWidth>
+                  <Button onClick={checkoutHandler} variant="contained" color="secondary" fullWidth>
                     Check Out
                   </Button>
                 </ListItem>
