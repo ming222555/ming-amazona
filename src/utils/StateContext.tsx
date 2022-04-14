@@ -33,22 +33,14 @@ function reducer(state: IFState, action: IFAction): IFState {
     case 'CART_ADD_ITEM':
       const newItem: IFCartItem = action.payload;
       const existItem = state.cart.cartItems.find((item) => item._id === newItem._id);
-      if (!existItem) {
-        const cartItems = [...state.cart.cartItems, newItem];
-        cookieSet('cartItems', cartItems);
-        return { ...state, cart: { ...state.cart, cartItems } };
-      }
+      const cartItems = existItem
+        ? state.cart.cartItems.map((item) => (item._id !== newItem._id ? item : newItem))
+        : [...state.cart.cartItems, newItem];
 
-      const newItemDup: IFCartItem = { ...newItem, quantity: existItem.quantity + newItem.quantity };
-      const existItemPos = state.cart.cartItems.findIndex((item) => item._id === newItem._id);
-      const cartItemsDup: IFCartItem[] = [...state.cart.cartItems];
-      cartItemsDup[existItemPos] = newItemDup;
-
-      cookieSet('cartItems', cartItemsDup);
-      return { ...state, cart: { ...state.cart, cartItems: cartItemsDup } };
-    case 'SET_CART_ITEMS':
-      const cartItems: IFCartItem[] = action.payload;
+      cookieSet('cartItems', cartItems);
       return { ...state, cart: { ...state.cart, cartItems } };
+    case 'SET_CART_ITEMS':
+      return { ...state, cart: { ...state.cart, cartItems: action.payload } };
     default:
       return state;
   }
