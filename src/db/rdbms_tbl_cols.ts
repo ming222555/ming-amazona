@@ -1,8 +1,11 @@
 export interface IFUser {
+  _id: string;
   name: string;
   email: string;
   password: string;
   isAdmin: boolean;
+  createdAt: string;
+  updatedAt: string;
 }
 
 // values of _id, createdAt and updatedAt are auto gen from mongo.

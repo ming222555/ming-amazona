@@ -2,7 +2,9 @@ import bcrypt from 'bcryptjs';
 
 import { IFUser, IFProduct } from './rdbms_tbl_cols';
 
-const users: IFUser[] = [
+type IFUserWithoutMongo = Omit<IFUser, '_id' | 'createdAt' | 'updatedAt'>;
+
+const users: IFUserWithoutMongo[] = [
   {
     name: 'John',
     email: 'admin@example.com',
