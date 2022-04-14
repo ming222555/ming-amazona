@@ -41,6 +41,10 @@ function reducer(state: IFState, action: IFAction): IFState {
       return { ...state, cart: { ...state.cart, cartItems } };
     case 'SET_CART_ITEMS':
       return { ...state, cart: { ...state.cart, cartItems: action.payload } };
+    case 'CART_REMOVE_ITEM':
+      const remainingCartItems = state.cart.cartItems.filter((item) => item._id !== action.payload);
+      cookieSet('cartItems', remainingCartItems);
+      return { ...state, cart: { ...state.cart, cartItems: remainingCartItems } };
     default:
       return state;
   }

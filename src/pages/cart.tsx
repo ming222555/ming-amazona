@@ -18,9 +18,12 @@ import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import Button from '@mui/material/Button';
 
+import axios from 'axios';
+
 import StateContext from '../utils/StateContext';
 import Link from '../components/Link';
 import Layout from '../components/Layout';
+import { IFProduct, IFCartItem } from '../db/rdbms_tbl_cols';
 
 function numList(num: number): JSX.Element[] {
   const jsxArry: JSX.Element[] = [];
@@ -35,10 +38,23 @@ function numList(num: number): JSX.Element[] {
 }
 
 const CartPage: NextPage = () => {
-  const { state } = useContext(StateContext);
+  const { state, dispatch } = useContext(StateContext);
   const {
     cart: { cartItems },
   } = state;
+
+  async function updateCartHandler(item: IFCartItem, quantity: number): Promise<void> {
+    const { data } = await axios.get<IFProduct>(`/api/products/${item._id}`);
+    if (data.countInStock < quantity) {
+      window.alert('Sorry. Product is out of stock');
+      return;
+    }
+    dispatch({ type: 'CART_ADD_ITEM', payload: { ...item, quantity } });
+  }
+
+  function removeItemHandler(id: string): void {
+    dispatch({ type: 'CART_REMOVE_ITEM', payload: id });
+  }
 
   return (
     <Layout title="Shopping Cart">
@@ -75,13 +91,18 @@ const CartPage: NextPage = () => {
                         </Link>
                       </TableCell>
                       <TableCell align="right">
-                        <Select value={item.quantity}>{numList(item.countInStock)}</Select>
+                        <Select
+                          value={item.quantity}
+                          onChange={(e): void => {
+                            updateCartHandler(item, e.target.value as number);
+                          }}
+                        >
+                          {numList(item.countInStock)}
+                        </Select>
                       </TableCell>
                       <TableCell align="right">${item.price}</TableCell>
                       <TableCell align="right">
-                        <IconButton
-                        // onClick={(): void => setDialogOpen(false)}
-                        >
+                        <IconButton onClick={(): void => removeItemHandler(item._id)}>
                           <DeleteIcon />
                         </IconButton>
                       </TableCell>
