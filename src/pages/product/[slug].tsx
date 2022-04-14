@@ -31,15 +31,22 @@ interface Props {
 
 const ProductPage: NextPage<Props> = ({ product }: Props) => {
   const router = useRouter();
-  const { dispatch } = useContext(StateContext);
+  const { state, dispatch } = useContext(StateContext);
   if (!product) {
     return <div>Product Not Found</div>;
   }
 
   const addToCartHandler = async (): Promise<void> => {
     const { data } = await axios.get<IFProduct>(`/api/products/${product._id}`);
-    if (data.countInStock <= 0) {
-      window.alert('Sorry. Product is out of stock');
+    const existCartItem = state.cart.cartItems.find((item) => item._id === product._id);
+    if (existCartItem) {
+      const quantity = existCartItem.quantity + 1;
+      if (data.countInStock < quantity) {
+        window.alert('Sorry. Product is out of stock');
+        return;
+      }
+      dispatch({ type: 'CART_ADD_ITEM', payload: { ...existCartItem, quantity } });
+      router.push('/cart');
       return;
     }
     dispatch({ type: 'CART_ADD_ITEM', payload: { ...product, quantity: 1 } });
