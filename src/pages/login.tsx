@@ -32,9 +32,10 @@ const LoginPage: NextPage = () => {
 
   const redirectTo: string = redirect as string;
 
+  // const isLogined = useRef(false);
   let isLogined = false;
 
-  if (userInfo) {
+  if (userInfo.token) {
     isLogined = true;
     router.push(redirectTo ? redirectTo : '/');
   }
