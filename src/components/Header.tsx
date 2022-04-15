@@ -1,4 +1,4 @@
-import React, { useContext, useRef, useEffect } from 'react';
+import React, { useContext, useRef, useEffect, useState } from 'react';
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
@@ -7,6 +7,10 @@ import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import Switch from '@mui/material/Switch';
 import Badge from '@mui/material/Badge';
+import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
+import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 
 import Cookies from 'js-cookie';
 
@@ -31,14 +35,26 @@ const StyledAppBar = styled(AppBar)(({ theme }) => ({
   },
 }));
 
+const StyledMenu = styled(Menu)(({ theme }) => ({
+  '& .MuiPaper-root': {
+    // background: theme.palette.common.blue,
+    background: theme.palette.primary.main,
+    borderRadius: 0,
+    borderWidth: 0,
+  },
+}));
+
 function getCartQuantity(total = 0, cartItem: IFCartItem): number {
   return total + cartItem.quantity;
 }
 
 export default function Header(): JSX.Element {
   const theme = useTheme();
+  const [anchorEl, setAnchorEl] = useState<EventTarget | null>(null);
   const { state, dispatch } = useContext(StateContext);
-  const { darkMode, cart } = state;
+  const { darkMode, cart, userInfo } = state;
+
+  const { token, name } = userInfo;
 
   const darkModeChangeHandler = (event: React.ChangeEvent<HTMLInputElement>, checked: boolean): void => {
     if (checked) {
@@ -46,6 +62,10 @@ export default function Header(): JSX.Element {
       return;
     }
     dispatch({ type: 'DARK_MODE_OFF' });
+  };
+
+  const loginMenuCloseHandler = (): void => {
+    setAnchorEl(null);
   };
 
   // const [value, setValue] = useState(0);
@@ -87,7 +107,6 @@ export default function Header(): JSX.Element {
         <Switch checked={darkMode} onChange={darkModeChangeHandler}></Switch>
         {/* indicatorColor overriden to transparent at Theme.ts */}
         <Tabs value={0} /* value={value} onChange={handleChange} indicatorColor="secondary" */>
-          {/* <Tab component={Link} href="/cart" label="Cart" className={`${PREFIX}-navbar__tab`} disableRipple /> */}
           <Tab
             component={Link}
             href="/cart"
@@ -99,8 +118,54 @@ export default function Header(): JSX.Element {
             className={`${PREFIX}-navbar__tab`}
             disableRipple
           />
-          <Tab component={Link} href="/login" label="Login" className={`${PREFIX}-navbar__tab`} disableRipple />
+          {/* <Tab component={Link} href="/login" label="Login" className={`${PREFIX}-navbar__tab`} disableRipple /> */}
+          <Tab
+            component={Link}
+            href={token ? '#' : '/login'}
+            label={token ? name : 'Login'}
+            aria-owns={token ? 'username-menu' : undefined}
+            aria-haspopup={token ? true : undefined}
+            iconPosition={token ? 'end' : undefined}
+            icon={
+              !token ? undefined : anchorEl ? (
+                <KeyboardArrowUpIcon style={{ margin: 0 }} />
+              ) : (
+                <KeyboardArrowDownIcon style={{ margin: 0 }} />
+              )
+            }
+            onClick={
+              token
+                ? (e: React.MouseEvent): void => {
+                    setAnchorEl(e.currentTarget);
+                  }
+                : undefined
+            }
+            className={`${PREFIX}-navbar__tab`}
+            style={{ opacity: token ? 1 : undefined }}
+            disableRipple
+          />
         </Tabs>
+        <StyledMenu
+          id="username-menu"
+          anchorEl={anchorEl as HTMLElement}
+          open={Boolean(anchorEl)}
+          onClose={loginMenuCloseHandler}
+          elevation={0}
+          style={{ zIndex: 1302, marginTop: '-1.8rem' }}
+          keepMounted
+        >
+          <MenuItem
+            component={Link}
+            href="/"
+            onClick={loginMenuCloseHandler}
+            style={{
+              ...theme.typography.tab,
+            }}
+            disableRipple
+          >
+            123
+          </MenuItem>
+        </StyledMenu>
       </Toolbar>
     </StyledAppBar>
   );
