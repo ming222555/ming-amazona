@@ -3,6 +3,7 @@ import type { NextPage } from 'next';
 import { useRouter } from 'next/router';
 import Typography from '@mui/material/Typography';
 
+import Link from '../components/Link';
 import StateContext from '../utils/StateContext';
 
 const ShippingPage: NextPage = () => {
@@ -19,6 +20,7 @@ const ShippingPage: NextPage = () => {
 
   return (
     <div>
+      <Link href="/">home</Link>
       <Typography variant="h1">Shipping</Typography>
       {isLogined ? <Typography>Shipping details...</Typography> : 'Redirecting to login...'}
     </div>

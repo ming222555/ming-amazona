@@ -60,11 +60,18 @@ export default function Header(): JSX.Element {
       hasMount.current = true;
 
       const szCookieCartItems = Cookies.get('cartItems');
+      const szUserInfo = Cookies.get('userInfo');
 
       if (szCookieCartItems) {
         dispatch({ type: 'SET_CART_ITEMS', payload: JSON.parse(szCookieCartItems) });
       } else {
-        dispatch({ type: 'SET_CART_ITEMS', payload: [] });
+        dispatch({ type: 'RESET_CART_ITEMS' });
+      }
+
+      if (szUserInfo) {
+        dispatch({ type: 'USER_LOGIN', payload: JSON.parse(szUserInfo) });
+      } else {
+        dispatch({ type: 'RESET_USER_LOGIN' });
       }
     }
   }, [dispatch]);

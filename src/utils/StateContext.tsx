@@ -44,14 +44,27 @@ function reducer(state: IFState, action: IFAction): IFState {
 
       cookieSet('cartItems', cartItems);
       return { ...state, cart: { ...state.cart, cartItems } };
-    case 'SET_CART_ITEMS':
-      return { ...state, cart: { ...state.cart, cartItems: action.payload } };
     case 'CART_REMOVE_ITEM':
       const remainingCartItems = state.cart.cartItems.filter((item) => item._id !== action.payload);
       cookieSet('cartItems', remainingCartItems);
       return { ...state, cart: { ...state.cart, cartItems: remainingCartItems } };
+    case 'SET_CART_ITEMS':
+      return { ...state, cart: { ...state.cart, cartItems: action.payload } };
+    case 'RESET_CART_ITEMS':
+      if (state.cart.cartItems.length === 0) {
+        return state;
+      }
+      cookieSet('cartItems', []);
+      return { ...state, cart: { ...state.cart, cartItems: [] } };
     case 'USER_LOGIN':
+      cookieSet('userInfo', action.payload);
       return { ...state, userInfo: action.payload };
+    case 'RESET_USER_LOGIN':
+      if (state.userInfo.token === '') {
+        return state;
+      }
+      cookieSet('userInfo', initialTokenUserState);
+      return { ...state, userInfo: initialTokenUserState };
     default:
       return state;
   }
