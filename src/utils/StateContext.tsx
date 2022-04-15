@@ -1,16 +1,21 @@
 import React, { createContext, useReducer } from 'react';
 
 import { IFCartItem } from '../db/rdbms_tbl_cols';
+import { IFTokenUser } from '../pages/api/users/login';
+import { initialState as initialTokenUserState } from '../api_pages/sharedData';
+
 import cookieSet from '../utils/cookieSet';
 
 interface IFState {
   darkMode: boolean;
   cart: { cartItems: IFCartItem[] };
+  userInfo: IFTokenUser;
 }
 
 const initialState: IFState = {
   darkMode: false,
   cart: { cartItems: [] },
+  userInfo: initialTokenUserState,
 };
 
 interface IFAction {
@@ -45,6 +50,8 @@ function reducer(state: IFState, action: IFAction): IFState {
       const remainingCartItems = state.cart.cartItems.filter((item) => item._id !== action.payload);
       cookieSet('cartItems', remainingCartItems);
       return { ...state, cart: { ...state.cart, cartItems: remainingCartItems } };
+    case 'USER_LOGIN':
+      return { ...state, userInfo: action.payload };
     default:
       return state;
   }
