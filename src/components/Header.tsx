@@ -37,8 +37,10 @@ const StyledAppBar = styled(AppBar)(({ theme }) => ({
 
 const StyledMenu = styled(Menu)(({ theme }) => ({
   '& .MuiPaper-root': {
-    // background: theme.palette.common.blue,
-    background: theme.palette.primary.main,
+    background: `${theme.palette.mode !== 'dark' ? theme.palette.common.blue : '#121212'}`, // from Chrome inspector...
+    backgroundImage: `${
+      theme.palette.mode !== 'dark' ? 'none' : 'linear-gradient(rgba(255, 255, 255, 0.09), rgba(255, 255, 255, 0.09))'
+    }`,
     borderRadius: 0,
     borderWidth: 0,
   },
