@@ -26,3 +26,7 @@ export default function cookieSet(name: string, val: string | number | boolean |
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   Cookies.set(name, JSON.stringify(val), { expires: 7 });
 }
+
+export function cookieRemove(name: string): void {
+  Cookies.remove(name);
+}

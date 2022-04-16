@@ -4,7 +4,7 @@ import { IFCartItem } from '../db/rdbms_tbl_cols';
 import { IFTokenUser } from '../pages/api/users/login';
 import { initialState as initialTokenUserState } from '../api_pages/sharedData';
 
-import cookieSet from '../utils/cookieSet';
+import cookieSet, { cookieRemove } from '../utils/cookieSet';
 
 interface IFState {
   darkMode: boolean;
@@ -50,24 +50,12 @@ function reducer(state: IFState, action: IFAction): IFState {
       return { ...state, cart: { ...state.cart, cartItems: remainingCartItems } };
     case 'SET_CART_ITEMS':
       return { ...state, cart: { ...state.cart, cartItems: action.payload } };
-    case 'RESET_CART_ITEMS':
-      if (state.cart.cartItems.length === 0) {
-        return state;
-      }
-      cookieSet('cartItems', []);
-      return { ...state, cart: { ...state.cart, cartItems: [] } };
     case 'USER_LOGIN':
       cookieSet('userInfo', action.payload);
       return { ...state, userInfo: action.payload };
-    case 'RESET_USER_LOGIN':
-      if (state.userInfo.token === '') {
-        return state;
-      }
-      cookieSet('userInfo', initialTokenUserState);
-      return { ...state, userInfo: initialTokenUserState };
     case 'USER_LOGOUT':
-      cookieSet('userInfo', initialTokenUserState);
-      cookieSet('cartItems', []);
+      cookieRemove('userInfo');
+      cookieRemove('cartItems');
       return { ...state, userInfo: initialTokenUserState, cart: { ...state.cart, cartItems: [] } };
     default:
       return state;

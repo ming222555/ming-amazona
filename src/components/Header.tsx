@@ -95,14 +95,10 @@ export default function Header(): JSX.Element {
 
       if (szCookieCartItems) {
         dispatch({ type: 'SET_CART_ITEMS', payload: JSON.parse(szCookieCartItems) });
-      } else {
-        dispatch({ type: 'RESET_CART_ITEMS' });
       }
 
       if (szUserInfo) {
         dispatch({ type: 'USER_LOGIN', payload: JSON.parse(szUserInfo) });
-      } else {
-        dispatch({ type: 'RESET_USER_LOGIN' });
       }
     }
   }, [dispatch]);
