@@ -1,4 +1,5 @@
 import React, { useContext, useRef, useEffect, useState } from 'react';
+import { useRouter } from 'next/router';
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
@@ -53,6 +54,7 @@ function getCartQuantity(total = 0, cartItem: IFCartItem): number {
 export default function Header(): JSX.Element {
   const theme = useTheme();
   const [anchorEl, setAnchorEl] = useState<EventTarget | null>(null);
+  const router = useRouter();
   const { state, dispatch } = useContext(StateContext);
   const { darkMode, cart, userInfo } = state;
 
@@ -68,6 +70,13 @@ export default function Header(): JSX.Element {
 
   const loginMenuCloseHandler = (): void => {
     setAnchorEl(null);
+  };
+
+  const logoutClickHandler = (e: React.SyntheticEvent<Element, Event>): void => {
+    e.preventDefault();
+    setAnchorEl(null);
+    dispatch({ type: 'USER_LOGOUT' });
+    router.push('/');
   };
 
   // const [value, setValue] = useState(0);
@@ -120,7 +129,6 @@ export default function Header(): JSX.Element {
             className={`${PREFIX}-navbar__tab`}
             disableRipple
           />
-          {/* <Tab component={Link} href="/login" label="Login" className={`${PREFIX}-navbar__tab`} disableRipple /> */}
           <Tab
             component={Link}
             href={token ? '#' : '/login'}
@@ -166,6 +174,17 @@ export default function Header(): JSX.Element {
             disableRipple
           >
             123
+          </MenuItem>
+          <MenuItem
+            component={Link}
+            href="/"
+            onClick={logoutClickHandler}
+            style={{
+              ...theme.typography.tab,
+            }}
+            disableRipple
+          >
+            Logout
           </MenuItem>
         </StyledMenu>
       </Toolbar>

@@ -65,6 +65,10 @@ function reducer(state: IFState, action: IFAction): IFState {
       }
       cookieSet('userInfo', initialTokenUserState);
       return { ...state, userInfo: initialTokenUserState };
+    case 'USER_LOGOUT':
+      cookieSet('userInfo', initialTokenUserState);
+      cookieSet('cartItems', []);
+      return { ...state, userInfo: initialTokenUserState, cart: { ...state.cart, cartItems: [] } };
     default:
       return state;
   }
