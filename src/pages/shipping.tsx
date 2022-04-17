@@ -16,11 +16,15 @@ const ShippingPage: NextPage = () => {
   return (
     <Layout title="Shipping">
       <Typography variant="h1">Shipping</Typography>
-      {!userInfo.token ? (
+      {cartItems.length === 0 ? (
+        <div>
+          Cart is empty. <Link href="/">Go shopping</Link>
+        </div>
+      ) : !userInfo.token ? (
         <div>
           Click <Link href="/login?redirect=/shipping">here</Link> to login
         </div>
-      ) : cartItems.length > 0 ? (
+      ) : (
         <div>
           <Typography>{userInfo.token}</Typography>
           {cartItems.map(
@@ -30,10 +34,6 @@ const ShippingPage: NextPage = () => {
               </p>
             ),
           )}
-        </div>
-      ) : (
-        <div>
-          Cart is empty. <Link href="/">Go shopping</Link>
         </div>
       )}
     </Layout>
