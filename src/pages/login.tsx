@@ -30,14 +30,13 @@ const LoginPage: NextPage = () => {
   const { state, dispatch } = useContext(StateContext);
   const { userInfo } = state;
 
-  const redirectTo: string = redirect as string;
+  const redirectTo: string = (redirect as string) ? (redirect as string) : '/';
 
-  // const isLogined = useRef(false);
   let isLogined = false;
 
   if (userInfo.token) {
     isLogined = true;
-    router.push(redirectTo ? redirectTo : '/');
+    router.push(redirectTo);
   }
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -57,7 +56,7 @@ const LoginPage: NextPage = () => {
       <StyledLoginForm className={`${PREFIX}-loginform`} onSubmit={submitHandler}>
         <Typography variant="h1">Login</Typography>
         {isLogined ? (
-          <Typography>Redirecting to {redirectTo ? redirectTo.substring(1) : 'home'} page...</Typography>
+          <Typography>Redirecting to {redirectTo === '/' ? 'home' : redirectTo.substring(1)} page...</Typography>
         ) : (
           <List>
             <ListItem>
@@ -86,7 +85,8 @@ const LoginPage: NextPage = () => {
               </Button>
             </ListItem>
             <ListItem>
-              Don&lsquo;t have an account?&nbsp;<Link href="/register">Register</Link>
+              Don&lsquo;t have an account?&nbsp;
+              <Link href={`/register?redirect=${redirectTo}`}>Register</Link>
             </ListItem>
           </List>
         )}
