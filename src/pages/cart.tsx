@@ -67,7 +67,7 @@ const CartPage: NextPage = () => {
       <Typography variant="h1">Shopping Cart</Typography>
       {cartItems.length === 0 ? (
         <div>
-          Cart is empty. <Link href="/">Go shopping</Link>{' '}
+          Cart is empty. <Link href="/">Go shopping</Link>
         </div>
       ) : (
         <Grid container spacing={1}>
