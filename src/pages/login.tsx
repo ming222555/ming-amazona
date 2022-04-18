@@ -7,6 +7,7 @@ import ListItem from '@mui/material/ListItem';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import Snackbar from '@mui/material/Snackbar';
+import CircularProgress from '@mui/material/CircularProgress';
 import { styled } from '@mui/material/styles';
 
 import axios from 'axios';
@@ -50,6 +51,8 @@ const LoginPage: NextPage = () => {
     backgroundColor: '',
   });
 
+  const [loading, setLoading] = useState(false);
+
   const redirectTo: string = (redirect as string) ? (redirect as string) : '/';
 
   let isLogined = false;
@@ -61,9 +64,11 @@ const LoginPage: NextPage = () => {
 
   const submitHandler = async ({ email, password }: IFFormData): Promise<void> => {
     try {
+      setLoading(true);
       const { data } = await axios.post<LoginRes>('/api/users/login', { email, password });
       dispatch({ type: 'USER_LOGIN', payload: data as IFTokenUser });
     } catch (err) {
+      setLoading(false);
       setAlert({
         open: true,
         message: err.response.data ? err.response.data.errormsg : err.message,
@@ -128,8 +133,8 @@ const LoginPage: NextPage = () => {
                 />
               </ListItem>
               <ListItem>
-                <Button variant="contained" color="primary" type="submit" fullWidth>
-                  Login
+                <Button variant="contained" color="primary" type="submit" disabled={loading} fullWidth>
+                  {loading ? <CircularProgress size={30} /> : 'Login'}
                 </Button>
               </ListItem>
               <ListItem>

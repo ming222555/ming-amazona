@@ -7,6 +7,7 @@ import ListItem from '@mui/material/ListItem';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import Snackbar from '@mui/material/Snackbar';
+import CircularProgress from '@mui/material/CircularProgress';
 import { styled } from '@mui/material/styles';
 
 import axios from 'axios';
@@ -52,6 +53,8 @@ const RegisterPage: NextPage = () => {
     backgroundColor: '',
   });
 
+  const [loading, setLoading] = useState(false);
+
   const redirectTo: string = (redirect as string) ? (redirect as string) : '/';
 
   let isLogined = false;
@@ -71,9 +74,11 @@ const RegisterPage: NextPage = () => {
       return;
     }
     try {
+      setLoading(true);
       const { data } = await axios.post<LoginRes>('/api/users/register', { name, email, password });
       dispatch({ type: 'USER_LOGIN', payload: data as IFTokenUser });
     } catch (err) {
+      setLoading(false);
       setAlert({
         open: true,
         message: err.response.data ? err.response.data.errormsg : err.message,
@@ -190,8 +195,8 @@ const RegisterPage: NextPage = () => {
                 />
               </ListItem>
               <ListItem>
-                <Button variant="contained" color="primary" type="submit" fullWidth>
-                  Register
+                <Button variant="contained" color="primary" type="submit" disabled={loading} fullWidth>
+                  {loading ? <CircularProgress size={30} /> : 'Register'}
                 </Button>
               </ListItem>
               <ListItem>
