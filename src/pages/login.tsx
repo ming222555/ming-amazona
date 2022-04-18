@@ -85,63 +85,65 @@ const LoginPage: NextPage = () => {
           <Typography>Redirecting to {redirectTo === '/' ? 'home' : redirectTo.substring(1)} page...</Typography>
         ) : (
           <>
-            <List>
-              <ListItem>
-                <Controller
-                  name="email"
-                  control={control}
-                  defaultValue=""
-                  rules={{ required: true, pattern: /^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$/ }}
-                  render={({ field }): JSX.Element => (
-                    <TextField
-                      variant="outlined"
-                      fullWidth
-                      id="email"
-                      label="Email"
-                      inputProps={{ type: 'email' }}
-                      error={Boolean(errors.email)}
-                      helperText={
-                        errors.email
-                          ? errors.email.type === 'pattern'
-                            ? 'Email is not valid'
-                            : 'Email is required'
-                          : ''
-                      }
-                      {...field}
-                    />
-                  )}
-                />
-              </ListItem>
-              <ListItem>
-                <Controller
-                  name="password"
-                  control={control}
-                  defaultValue=""
-                  rules={{ required: true }}
-                  render={({ field }): JSX.Element => (
-                    <TextField
-                      variant="outlined"
-                      fullWidth
-                      id="password"
-                      label="Password"
-                      inputProps={{ type: 'password' }}
-                      error={Boolean(errors.password)}
-                      helperText={errors.password ? 'Password is required' : ''}
-                      {...field}
-                    />
-                  )}
-                />
-              </ListItem>
-              <ListItem>
-                <Button variant="contained" color="primary" type="submit" disabled={loading} fullWidth>
-                  {loading ? <CircularProgress size={30} /> : 'Login'}
-                </Button>
-              </ListItem>
-              <ListItem>
-                Don&lsquo;t have an account?&nbsp;
-                <Link href={`/register?redirect=${redirectTo}`}>Register</Link>
-              </ListItem>
-            </List>
+            <fieldset style={{ margin: 0, padding: 0, border: 'transparent' }} disabled={loading}>
+              <List>
+                <ListItem>
+                  <Controller
+                    name="email"
+                    control={control}
+                    defaultValue=""
+                    rules={{ required: true, pattern: /^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$/ }}
+                    render={({ field }): JSX.Element => (
+                      <TextField
+                        variant="outlined"
+                        fullWidth
+                        id="email"
+                        label="Email"
+                        inputProps={{ type: 'email' }}
+                        error={Boolean(errors.email)}
+                        helperText={
+                          errors.email
+                            ? errors.email.type === 'pattern'
+                              ? 'Email is not valid'
+                              : 'Email is required'
+                            : ''
+                        }
+                        {...field}
+                      />
+                    )}
+                  />
+                </ListItem>
+                <ListItem>
+                  <Controller
+                    name="password"
+                    control={control}
+                    defaultValue=""
+                    rules={{ required: true }}
+                    render={({ field }): JSX.Element => (
+                      <TextField
+                        variant="outlined"
+                        fullWidth
+                        id="password"
+                        label="Password"
+                        inputProps={{ type: 'password' }}
+                        error={Boolean(errors.password)}
+                        helperText={errors.password ? 'Password is required' : ''}
+                        {...field}
+                      />
+                    )}
+                  />
+                </ListItem>
+                <ListItem>
+                  <Button variant="contained" color="primary" type="submit" disabled={loading} fullWidth>
+                    {loading ? <CircularProgress size={30} /> : 'Login'}
+                  </Button>
+                </ListItem>
+                <ListItem>
+                  Don&lsquo;t have an account?&nbsp;
+                  <Link href={`/register?redirect=${redirectTo}`}>Register</Link>
+                </ListItem>
+              </List>
+            </fieldset>
             <Snackbar
               open={alert.open}
               message={alert.message}
