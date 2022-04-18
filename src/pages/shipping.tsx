@@ -1,21 +1,87 @@
-import React, { useContext } from 'react';
+import React, { useContext, useRef, useEffect } from 'react';
 import type { NextPage } from 'next';
+import { useRouter } from 'next/router';
 import Typography from '@mui/material/Typography';
+import List from '@mui/material/List';
+import ListItem from '@mui/material/ListItem';
+import TextField from '@mui/material/TextField';
+import Button from '@mui/material/Button';
+import { styled } from '@mui/material/styles';
+
+import Cookies from 'js-cookie';
+import { Controller, useForm } from 'react-hook-form';
 
 import Layout from '../components/Layout';
 import Link from '../components/Link';
+import { IFShippingAddress } from '../db/rdbms_tbl_cols';
 import StateContext from '../utils/StateContext';
+import CheckoutWizard from '../components/shared/checkoutWizard';
+
+const PREFIX = 'ShippingPage';
+
+const StyledShippingForm = styled('form')({
+  [`&.${PREFIX}-shippingform`]: {
+    maxWidth: 800,
+    margin: 'auto',
+  },
+});
+
+interface IFFormData {
+  fullName: string;
+  address: string;
+  city: string;
+  postalCode: string;
+  country: string;
+}
 
 const ShippingPage: NextPage = () => {
-  const { state } = useContext(StateContext);
+  // https://stackoverflow.com/questions/71275687/type-of-handlesubmit-parameter-in-react-hook-form
+  const {
+    handleSubmit,
+    control,
+    formState: { errors },
+    setValue,
+  } = useForm<IFFormData>();
+
+  const { dispatch, state } = useContext(StateContext);
   const {
     cart: { cartItems },
     userInfo,
   } = state;
 
+  const router = useRouter();
+
+  const submitHandler = ({ fullName, address, city, postalCode, country }: IFFormData): void => {
+    dispatch({
+      type: 'SAVE_SHIPPING_ADDRESS',
+      payload: { fullName, address, city, postalCode, country } as IFShippingAddress,
+    });
+    router.push('/payment');
+  };
+
+  const hasMount = useRef(false);
+
+  useEffect(() => {
+    if (!hasMount.current) {
+      hasMount.current = true;
+
+      const szCookieShippingAddress = Cookies.get('shippingAddress');
+
+      if (szCookieShippingAddress) {
+        const shippingAddress: IFShippingAddress = JSON.parse(szCookieShippingAddress);
+        setValue('fullName', shippingAddress.fullName);
+        setValue('address', shippingAddress.address);
+        setValue('city', shippingAddress.city);
+        setValue('postalCode', shippingAddress.postalCode);
+        setValue('country', shippingAddress.country);
+        dispatch({ type: 'SET_SHIPPING_ADDRESS', payload: JSON.parse(szCookieShippingAddress) });
+      }
+    }
+  }, [dispatch, setValue]);
+
   return (
-    <Layout title="Shipping">
-      <Typography variant="h1">Shipping</Typography>
+    <Layout title="Shipping Address">
+      <Typography variant="h1">Shipping Address</Typography>
       {cartItems.length === 0 ? (
         <div>
           Cart is empty. <Link href="/">Go shopping</Link>
@@ -25,16 +91,143 @@ const ShippingPage: NextPage = () => {
           Click <Link href="/login?redirect=/shipping">here</Link> to login
         </div>
       ) : (
-        <div>
-          <Typography>{userInfo.token}</Typography>
-          {cartItems.map(
-            (item): React.ReactNode => (
-              <p key={item._id}>
-                {item.name} {item.quantity}
-              </p>
-            ),
-          )}
-        </div>
+        <>
+          <CheckoutWizard activeStep={1} />
+          <StyledShippingForm className={`${PREFIX}-shippingform`} onSubmit={handleSubmit(submitHandler)}>
+            <List>
+              <ListItem>
+                <Controller
+                  name="fullName"
+                  control={control}
+                  defaultValue=""
+                  rules={{ required: true, minLength: 6 }}
+                  render={({ field }): JSX.Element => (
+                    <TextField
+                      variant="outlined"
+                      fullWidth
+                      id="fullName"
+                      label="Full Name"
+                      error={Boolean(errors.fullName)}
+                      helperText={
+                        errors.fullName
+                          ? errors.fullName.type === 'minLength'
+                            ? 'Full Name length is more than 5'
+                            : 'Full Name is required'
+                          : ''
+                      }
+                      {...field}
+                    />
+                  )}
+                />
+              </ListItem>
+              <ListItem>
+                <Controller
+                  name="address"
+                  control={control}
+                  defaultValue=""
+                  rules={{ required: true, minLength: 6 }}
+                  render={({ field }): JSX.Element => (
+                    <TextField
+                      variant="outlined"
+                      fullWidth
+                      id="address"
+                      label="Address"
+                      error={Boolean(errors.address)}
+                      helperText={
+                        errors.address
+                          ? errors.address.type === 'minLength'
+                            ? 'Address length is more than 5'
+                            : 'Address is required'
+                          : ''
+                      }
+                      {...field}
+                    />
+                  )}
+                />
+              </ListItem>
+              <ListItem>
+                <Controller
+                  name="city"
+                  control={control}
+                  defaultValue=""
+                  rules={{ required: true, minLength: 6 }}
+                  render={({ field }): JSX.Element => (
+                    <TextField
+                      variant="outlined"
+                      fullWidth
+                      id="city"
+                      label="City"
+                      error={Boolean(errors.city)}
+                      helperText={
+                        errors.city
+                          ? errors.city.type === 'minLength'
+                            ? 'City length is more than 5'
+                            : 'City is required'
+                          : ''
+                      }
+                      {...field}
+                    />
+                  )}
+                />
+              </ListItem>
+              <ListItem>
+                <Controller
+                  name="postalCode"
+                  control={control}
+                  defaultValue=""
+                  rules={{ required: true, minLength: 6 }}
+                  render={({ field }): JSX.Element => (
+                    <TextField
+                      variant="outlined"
+                      fullWidth
+                      id="postalCode"
+                      label="Postal Code"
+                      error={Boolean(errors.postalCode)}
+                      helperText={
+                        errors.postalCode
+                          ? errors.postalCode.type === 'minLength'
+                            ? 'Postal Code length is more than 5'
+                            : 'Postal Code is required'
+                          : ''
+                      }
+                      {...field}
+                    />
+                  )}
+                />
+              </ListItem>
+              <ListItem>
+                <Controller
+                  name="country"
+                  control={control}
+                  defaultValue=""
+                  rules={{ required: true, minLength: 6 }}
+                  render={({ field }): JSX.Element => (
+                    <TextField
+                      variant="outlined"
+                      fullWidth
+                      id="country"
+                      label="Country"
+                      error={Boolean(errors.country)}
+                      helperText={
+                        errors.country
+                          ? errors.country.type === 'minLength'
+                            ? 'Country length is more than 5'
+                            : 'Country is required'
+                          : ''
+                      }
+                      {...field}
+                    />
+                  )}
+                />
+              </ListItem>
+              <ListItem>
+                <Button variant="contained" color="primary" type="submit" fullWidth>
+                  Continue
+                </Button>
+              </ListItem>
+            </List>
+          </StyledShippingForm>
+        </>
       )}
     </Layout>
   );

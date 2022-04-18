@@ -30,3 +30,13 @@ export interface IFProduct {
 export interface IFCartItem extends IFProduct {
   quantity: number;
 }
+
+// stuff without fields _id, createdAt and updatedAt are NOT a database table!
+
+export interface IFShippingAddress {
+  fullName: string;
+  address: string;
+  city: string;
+  postalCode: string;
+  country: string;
+}

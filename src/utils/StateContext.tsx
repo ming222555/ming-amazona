@@ -1,20 +1,20 @@
 import React, { createContext, useReducer } from 'react';
 
-import { IFCartItem } from '../db/rdbms_tbl_cols';
+import { IFCartItem, IFShippingAddress } from '../db/rdbms_tbl_cols';
 import { IFTokenUser } from '../pages/api/users/login';
-import { initialState as initialTokenUserState } from '../api_pages/sharedData';
+import { initialCartItemsState, initialTokenUserState, initialShippingAddressState } from '../api_pages/sharedData';
 
 import cookieSet, { cookieRemove } from '../utils/cookieSet';
 
 interface IFState {
   darkMode: boolean;
-  cart: { cartItems: IFCartItem[] };
+  cart: { cartItems: IFCartItem[]; shippingAddress: IFShippingAddress };
   userInfo: IFTokenUser;
 }
 
 const initialState: IFState = {
   darkMode: false,
-  cart: { cartItems: [] },
+  cart: { cartItems: initialCartItemsState, shippingAddress: initialShippingAddressState },
   userInfo: initialTokenUserState,
 };
 
@@ -50,12 +50,18 @@ function reducer(state: IFState, action: IFAction): IFState {
       return { ...state, cart: { ...state.cart, cartItems: remainingCartItems } };
     case 'SET_CART_ITEMS':
       return { ...state, cart: { ...state.cart, cartItems: action.payload } };
+    case 'SAVE_SHIPPING_ADDRESS':
+      cookieSet('shippingAddress', action.payload);
+      return { ...state, cart: { ...state.cart, shippingAddress: action.payload } };
+    case 'SET_SHIPPING_ADDRESS':
+      return { ...state, cart: { ...state.cart, shippingAddress: action.payload } };
     case 'USER_LOGIN':
       cookieSet('userInfo', action.payload);
       return { ...state, userInfo: action.payload };
     case 'USER_LOGOUT':
       cookieRemove('userInfo');
       cookieRemove('cartItems');
+      cookieRemove('shippingAddress');
       return { ...state, userInfo: initialTokenUserState, cart: { ...state.cart, cartItems: [] } };
     default:
       return state;
