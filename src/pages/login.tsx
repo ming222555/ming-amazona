@@ -64,7 +64,6 @@ const LoginPage: NextPage = () => {
       const { data } = await axios.post<LoginRes>('/api/users/login', { email, password });
       dispatch({ type: 'USER_LOGIN', payload: data as IFTokenUser });
     } catch (err) {
-      // alert(err.response.data ? err.response.data.errormsg : err.message);\
       setAlert({
         open: true,
         message: err.response.data ? err.response.data.errormsg : err.message,
@@ -113,7 +112,7 @@ const LoginPage: NextPage = () => {
                   name="password"
                   control={control}
                   defaultValue=""
-                  rules={{ required: true, minLength: 6 }}
+                  rules={{ required: true }}
                   render={({ field }): JSX.Element => (
                     <TextField
                       variant="outlined"
@@ -122,13 +121,7 @@ const LoginPage: NextPage = () => {
                       label="Password"
                       inputProps={{ type: 'password' }}
                       error={Boolean(errors.password)}
-                      helperText={
-                        errors.password
-                          ? errors.password.type === 'minLength'
-                            ? 'Password length is more than 5'
-                            : 'Password is required'
-                          : ''
-                      }
+                      helperText={errors.password ? 'Password is required' : ''}
                       {...field}
                     />
                   )}
