@@ -199,7 +199,6 @@ const RegisterPage: NextPage = () => {
                 <Link href={`/login?redirect=${redirectTo}`}>Login</Link>
               </ListItem>
             </List>
-
             <Snackbar
               open={alert.open}
               message={alert.message}

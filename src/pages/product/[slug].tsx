@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useState } from 'react';
 import type { NextPage, GetServerSideProps } from 'next';
 import { useRouter } from 'next/router';
 import Image from 'next/image';
@@ -9,6 +9,7 @@ import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import Card from '@mui/material/Card';
 import Button from '@mui/material/Button';
+import Snackbar from '@mui/material/Snackbar';
 import { styled } from '@mui/material/styles';
 
 import axios from 'axios';
@@ -32,6 +33,13 @@ interface Props {
 const ProductPage: NextPage<Props> = ({ product }: Props) => {
   const router = useRouter();
   const { state, dispatch } = useContext(StateContext);
+
+  const [alert, setAlert] = useState({
+    open: false,
+    message: '',
+    backgroundColor: '',
+  });
+
   if (!product) {
     return <div>Product Not Found</div>;
   }
@@ -42,7 +50,11 @@ const ProductPage: NextPage<Props> = ({ product }: Props) => {
     if (existCartItem) {
       const quantity = existCartItem.quantity + 1;
       if (data.countInStock < quantity) {
-        window.alert('Sorry. Product is out of stock');
+        setAlert({
+          open: true,
+          message: 'Sorry. Product is out of stock',
+          backgroundColor: '#FF3232',
+        });
         return;
       }
       dispatch({ type: 'CART_ADD_ITEM', payload: { ...existCartItem, quantity } });
@@ -124,6 +136,14 @@ const ProductPage: NextPage<Props> = ({ product }: Props) => {
             </Card>
           </Grid>
         </Grid>
+        <Snackbar
+          open={alert.open}
+          message={alert.message}
+          ContentProps={{ style: { backgroundColor: alert.backgroundColor } }}
+          anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+          onClose={(): void => setAlert({ ...alert, open: false })}
+          autoHideDuration={4000}
+        />
       </div>
     </Layout>
   );
