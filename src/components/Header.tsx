@@ -44,6 +44,7 @@ const StyledMenu = styled(Menu)(({ theme }) => ({
     }`,
     borderRadius: 0,
     borderWidth: 0,
+    marginTop: 4,
   },
 }));
 
@@ -128,7 +129,15 @@ export default function Header(): JSX.Element {
           <Tab
             component={Link}
             href={token ? '#' : '/login'}
-            label={token ? name : 'Login'}
+            label={
+              token ? (
+                <span style={{ maxWidth: '10rem', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                  {name}
+                </span>
+              ) : (
+                'Login'
+              )
+            }
             aria-owns={token ? 'username-menu' : undefined}
             aria-haspopup={token ? true : undefined}
             iconPosition={token ? 'end' : undefined}
@@ -158,6 +167,14 @@ export default function Header(): JSX.Element {
           onClose={loginMenuCloseHandler}
           elevation={0}
           style={{ zIndex: 1302, marginTop: '-1.8rem' }}
+          // anchorOrigin={{
+          //   vertical: 'bottom',
+          //   horizontal: 'right',
+          // }}
+          // transformOrigin={{
+          //   vertical: 'top',
+          //   horizontal: 'right',
+          // }}
           keepMounted
         >
           <MenuItem
