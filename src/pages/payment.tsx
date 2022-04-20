@@ -1,6 +1,15 @@
-import React, { useContext, useRef, useEffect } from 'react';
+import React, { useContext, useRef, useEffect, useState } from 'react';
 import type { NextPage } from 'next';
+import Image from 'next/image';
 import Typography from '@mui/material/Typography';
+import Grid from '@mui/material/Grid';
+import TableContainer from '@mui/material/TableContainer';
+import Table from '@mui/material/Table';
+import TableHead from '@mui/material/TableHead';
+import TableRow from '@mui/material/TableRow';
+import TableCell from '@mui/material/TableCell';
+import TableBody from '@mui/material/TableBody';
+import Card from '@mui/material/Card';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import FormControl from '@mui/material/FormControl';
@@ -10,6 +19,11 @@ import RadioGroup from '@mui/material/RadioGroup';
 import FormHelperText from '@mui/material/FormHelperText';
 import Radio from '@mui/material/Radio';
 import Button from '@mui/material/Button';
+import Dialog from '@mui/material/Dialog';
+import DialogContent from '@mui/material/DialogContent';
+import DialogTitle from '@mui/material/DialogTitle';
+import IconButton from '@mui/material/IconButton';
+import CloseIcon from '@mui/icons-material/Close';
 import { styled } from '@mui/material/styles';
 
 import Cookies from 'js-cookie';
@@ -30,8 +44,20 @@ const StyledForm = styled('form')({
   },
 });
 
+const StyledCard = styled(Card)({
+  marginTop: 4,
+});
+
 interface IFFormData {
   paymentMode: string;
+}
+
+import { IFCartItem } from '../db/rdbms_tbl_cols';
+
+const round2 = (num: number): number => Math.round(num * 100 + Number.EPSILON) / 100;
+
+function getcartItemsPrice(total = 0, cartItem: IFCartItem): number {
+  return total + cartItem.price * cartItem.quantity;
 }
 
 const PaymentPage: NextPage = () => {
@@ -40,6 +66,7 @@ const PaymentPage: NextPage = () => {
     handleSubmit,
     register,
     formState: { errors },
+    getValues,
   } = useForm<IFFormData>();
 
   const { dispatch, state } = useContext(StateContext);
@@ -48,16 +75,17 @@ const PaymentPage: NextPage = () => {
     userInfo,
   } = state;
 
+  const [dialogOpen, setDialogOpen] = useState(false);
+
   const submitHandler = ({ paymentMode }: IFFormData): void => {
     // dispatch({
     //   type: 'SAVE_SHIPPING_ADDRESS',
     //   payload: { fullName, address, city, postalCode, country } as IFPayment,
     // });
     // router.push('/payment');
-    // // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    // const xxxxx = paymentMode;
-    // eslint-disable-next-line no-console
-    console.log('paymentMode', paymentMode);
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const xxxxx = paymentMode;
+    setDialogOpen(true);
   };
 
   const hasMount = useRef(false);
@@ -93,6 +121,18 @@ const PaymentPage: NextPage = () => {
     }
   }
 
+  let cartItemsPrice = 0;
+  let cartShippingPrice = 0;
+  let cartTaxPrice = 0;
+  let cartTotalPrice = 0;
+
+  if (dialogOpen) {
+    cartItemsPrice = round2(cartItems.reduce(getcartItemsPrice, 0));
+    cartShippingPrice = cartItemsPrice > 200 ? 0 : 15;
+    cartTaxPrice = round2(cartItemsPrice * 0.15);
+    cartTotalPrice = round2(cartItemsPrice + cartShippingPrice + cartTaxPrice);
+  }
+
   useEffect(() => {
     if (!hasMount.current) {
       hasMount.current = true;
@@ -116,7 +156,7 @@ const PaymentPage: NextPage = () => {
         <div>{badJsx}</div>
       ) : (
         <>
-          <CheckoutWizard activeStep={2} />
+          <CheckoutWizard activeStep={2} hidden={dialogOpen ? true : undefined} />
           <StyledForm className={`${PREFIX}-form`} onSubmit={handleSubmit(submitHandler)}>
             <List>
               <ListItem>
@@ -125,19 +165,19 @@ const PaymentPage: NextPage = () => {
                   <FormLabel component="legend">Payment Method</FormLabel>
                   <RadioGroup aria-label="paymentMode" name="paymentMode" /* row */>
                     <FormControlLabel
-                      value="female"
+                      value="PayPal"
                       control={<Radio {...register('paymentMode', { required: 'Payment Method is required' })} />}
-                      label="Female"
+                      label="PayPal"
                     />
                     <FormControlLabel
-                      value="male"
+                      value="Visa"
                       control={<Radio {...register('paymentMode', { required: 'Payment Method is required' })} />}
-                      label="Male"
+                      label="Visa"
                     />
                     <FormControlLabel
-                      value="other"
+                      value="MasterCard"
                       control={<Radio {...register('paymentMode', { required: 'Payment Method is required' })} />}
-                      label="Other"
+                      label="MasterCard"
                     />
                   </RadioGroup>
                   <FormHelperText style={{ color: '#d32f2f' }}>{errors.paymentMode?.message}</FormHelperText>
@@ -155,6 +195,177 @@ const PaymentPage: NextPage = () => {
               </ListItem>
             </List>
           </StyledForm>
+          {/* <Dialog open={true} fullWidth> */}
+          <Dialog
+            open={dialogOpen}
+            PaperProps={{
+              sx: {
+                // minHeight: {
+                //   xs: '100%', // theme.breakpoints.up('xs')
+                //   md: 'auto', // theme.breakpoints.up('md')
+                // },
+                minWidth: {
+                  xs: '100vw',
+                  md: 800,
+                },
+              },
+            }}
+          >
+            <DialogTitle style={{ position: 'relative' }}>
+              <CheckoutWizard activeStep={3} />
+              <IconButton
+                onClick={(): void => setDialogOpen(false)}
+                style={{ position: 'absolute', background: '#d32f2f' }}
+                sx={{
+                  top: {
+                    xs: '.5rem',
+                    // md: '1rem',
+                  },
+                  right: {
+                    xs: '.5rem',
+                    // md: '-2rem',
+                  },
+                }}
+              >
+                <CloseIcon />
+              </IconButton>
+            </DialogTitle>
+            <DialogContent>
+              <Typography component="h2" variant="h1">
+                Place Order
+              </Typography>
+              <Grid container spacing={1}>
+                <Grid item md={9} xs={12}>
+                  <StyledCard>
+                    <List>
+                      <ListItem>
+                        <Typography variant="h2">Shipping Address</Typography>
+                      </ListItem>
+                      <ListItem>
+                        <Typography component="span" style={{ fontSize: '1rem' }}>
+                          {shippingAddress.fullName}, {shippingAddress.address}, {shippingAddress.city},
+                          {shippingAddress.postalCode}, {shippingAddress.country}
+                        </Typography>
+                      </ListItem>
+                    </List>
+                  </StyledCard>
+                  <StyledCard>
+                    <List>
+                      <ListItem>
+                        <Typography variant="h2">Payment Method</Typography>
+                      </ListItem>
+                      <ListItem>
+                        <Typography component="span" style={{ fontSize: '1rem' }}>
+                          {getValues().paymentMode}
+                        </Typography>
+                      </ListItem>
+                    </List>
+                  </StyledCard>
+                  <StyledCard>
+                    <List>
+                      <ListItem>
+                        <Typography variant="h2">Order Items</Typography>
+                      </ListItem>
+                      <ListItem>
+                        <TableContainer>
+                          <Table>
+                            <TableHead>
+                              <TableRow>
+                                <TableCell>Image</TableCell>
+                                <TableCell>Name</TableCell>
+                                <TableCell align="right">Quantity</TableCell>
+                                <TableCell align="right">Price</TableCell>
+                              </TableRow>
+                            </TableHead>
+                            <TableBody>
+                              {cartItems.map((item) => (
+                                <TableRow key={item._id}>
+                                  <TableCell>
+                                    <Link href={`/product/${item.slug}`}>
+                                      <Image src={item.image} alt={item.name} width={50} height={50} />
+                                    </Link>
+                                  </TableCell>
+                                  <TableCell>
+                                    <Link href={`/product/${item.slug}`}>
+                                      <Typography color="secondary">{item.name}</Typography>
+                                    </Link>
+                                  </TableCell>
+                                  <TableCell align="right">
+                                    <Typography>{item.quantity}</Typography>
+                                  </TableCell>
+                                  <TableCell align="right">
+                                    <Typography>${item.price}</Typography>
+                                  </TableCell>
+                                </TableRow>
+                              ))}
+                            </TableBody>
+                          </Table>
+                        </TableContainer>
+                      </ListItem>
+                    </List>
+                  </StyledCard>
+                </Grid>
+                <Grid item md={3} xs={12}>
+                  <StyledCard>
+                    <List>
+                      <ListItem>
+                        <Typography variant="h2">Order&nbsp;Summary</Typography>
+                      </ListItem>
+                      <ListItem>
+                        <Grid container spacing={4}>
+                          <Grid item xs={6}>
+                            <Typography>Items:</Typography>
+                          </Grid>
+                          <Grid item xs={6}>
+                            <Typography align="right">${cartItemsPrice}</Typography>
+                          </Grid>
+                        </Grid>
+                      </ListItem>
+                      <ListItem>
+                        <Grid container spacing={4}>
+                          <Grid item xs={6}>
+                            <Typography>Tax:</Typography>
+                          </Grid>
+                          <Grid item xs={6}>
+                            <Typography align="right">${cartTaxPrice}</Typography>
+                          </Grid>
+                        </Grid>
+                      </ListItem>
+                      <ListItem>
+                        <Grid container spacing={4}>
+                          <Grid item xs={6}>
+                            <Typography>Shipping:</Typography>
+                          </Grid>
+                          <Grid item xs={6}>
+                            <Typography align="right">${cartShippingPrice}</Typography>
+                          </Grid>
+                        </Grid>
+                      </ListItem>
+                      <ListItem>
+                        <Grid container spacing={4}>
+                          <Grid item xs={6}>
+                            <Typography>
+                              <strong>Total:</strong>
+                            </Typography>
+                          </Grid>
+                          <Grid item xs={6}>
+                            <Typography align="right">
+                              <strong>${cartTotalPrice}</strong>
+                            </Typography>
+                          </Grid>
+                        </Grid>
+                      </ListItem>
+                      <ListItem>
+                        <Button variant="contained" color="secondary" fullWidth>
+                          Place Order
+                        </Button>
+                      </ListItem>
+                    </List>
+                  </StyledCard>
+                </Grid>
+              </Grid>
+            </DialogContent>
+          </Dialog>
         </>
       )}
     </Layout>
