@@ -1,5 +1,6 @@
 import React, { useContext, useRef, useEffect, useState } from 'react';
 import type { NextPage } from 'next';
+import { useRouter } from 'next/router';
 import Image from 'next/image';
 import Typography from '@mui/material/Typography';
 import Grid from '@mui/material/Grid';
@@ -24,14 +25,17 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
 import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
+import CircularProgress from '@mui/material/CircularProgress';
 import { styled } from '@mui/material/styles';
 
 import Cookies from 'js-cookie';
 import { useForm } from 'react-hook-form';
+import axios from 'axios';
 
 import Layout from '../components/Layout';
 import Link from '../components/Link';
 // import { IFPayment } from '../db/rdbms_tbl_cols';
+// import { LoginRes, IFTokenUser } from '../pages/api/users/login';
 import StateContext from '../utils/StateContext';
 import CheckoutWizard from '../components/shared/checkoutWizard';
 
@@ -76,6 +80,8 @@ const PaymentPage: NextPage = () => {
   } = state;
 
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const router = useRouter();
 
   const submitHandler = ({ paymentMode }: IFFormData): void => {
     // dispatch({
@@ -86,6 +92,39 @@ const PaymentPage: NextPage = () => {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const xxxxx = paymentMode;
     setDialogOpen(true);
+  };
+
+  const placeOrderHandler = async (): Promise<void> => {
+    try {
+      setLoading(true);
+      const { data } = await axios.post<LoginRes>(
+        '/api/orders',
+        {
+          orderItems: cartItems,
+          shippingAddress,
+          paymentMode: getValues().paymentMode,
+          itemsPrice: cartItemsPrice,
+          shippingPrice: cartShippingPrice,
+          taxPrice: cartTaxPrice,
+          totalPrice: cartTotalPrice,
+        },
+        {
+          headers: {
+            authorization: `Bearer ${userInfo.token}`,
+          },
+        },
+      );
+      dispatch({ type: 'CART_CLEAR' });
+      setLoading(false);
+      router.push(`/order/${data._id}`);
+    } catch (err) {
+      setLoading(false);
+      setAlert({
+        open: true,
+        message: err.response.data ? err.response.data.errormsg : err.message,
+        backgroundColor: '#FF3232',
+      });
+    }
   };
 
   const hasMount = useRef(false);
@@ -356,8 +395,14 @@ const PaymentPage: NextPage = () => {
                         </Grid>
                       </ListItem>
                       <ListItem>
-                        <Button variant="contained" color="secondary" fullWidth>
-                          Place Order
+                        <Button
+                          variant="contained"
+                          color="secondary"
+                          disabled={loading}
+                          onClick={placeOrderHandler}
+                          fullWidth
+                        >
+                          {loading ? <CircularProgress size={30} /> : 'Place Order'}
                         </Button>
                       </ListItem>
                     </List>
