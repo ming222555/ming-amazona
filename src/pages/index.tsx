@@ -10,6 +10,7 @@ import CardActions from '@mui/material/CardActions';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import Snackbar from '@mui/material/Snackbar';
+import CircularProgress from '@mui/material/CircularProgress';
 import { useTheme } from '@mui/material/styles';
 
 import axios from 'axios';
@@ -20,6 +21,7 @@ import db from '../db/db';
 import Product from '../db/models/Product';
 import { IFProduct } from '../db/rdbms_tbl_cols';
 import StateContext from '../utils/StateContext';
+import { getError } from '../utils/error/frontend/error';
 
 interface Props {
   products: IFProduct[];
@@ -37,25 +39,38 @@ const Home: NextPage<Props> = ({ products }: Props) => {
     backgroundColor: '',
   });
 
+  const [loading, setLoading] = useState(false);
+
   const addToCartHandler = async (product: IFProduct): Promise<void> => {
-    const { data } = await axios.get<IFProduct>(`/api/products/${product._id}`);
-    const existCartItem = state.cart.cartItems.find((item) => item._id === product._id);
-    if (existCartItem) {
-      const quantity = existCartItem.quantity + 1;
-      if (data.countInStock < quantity) {
-        setAlert({
-          open: true,
-          message: 'Sorry. Product is out of stock',
-          backgroundColor: '#FF3232',
-        });
+    try {
+      setLoading(true);
+      const res = await axios.get<IFProduct>(`/api/products/${product._id}`);
+      const { data } = res;
+      const existCartItem = state.cart.cartItems.find((item) => item._id === product._id);
+      if (existCartItem) {
+        const quantity = existCartItem.quantity + 1;
+        if (data.countInStock < quantity) {
+          setAlert({
+            open: true,
+            message: 'Sorry. Product is out of stock',
+            backgroundColor: '#FF3232',
+          });
+          return;
+        }
+        dispatch({ type: 'CART_ADD_ITEM', payload: { ...existCartItem, quantity } });
+        router.push('/cart');
         return;
       }
-      dispatch({ type: 'CART_ADD_ITEM', payload: { ...existCartItem, quantity } });
+      dispatch({ type: 'CART_ADD_ITEM', payload: { ...product, quantity: 1 } });
       router.push('/cart');
-      return;
+    } catch (err: unknown) {
+      setLoading(false);
+      setAlert({
+        open: true,
+        message: getError(err),
+        backgroundColor: '#FF3232',
+      });
     }
-    dispatch({ type: 'CART_ADD_ITEM', payload: { ...product, quantity: 1 } });
-    router.push('/cart');
   };
 
   return (
@@ -82,8 +97,9 @@ const Home: NextPage<Props> = ({ products }: Props) => {
                     onClick={(): void => {
                       addToCartHandler(p);
                     }}
+                    disabled={loading}
                   >
-                    Add to cart
+                    {loading ? <CircularProgress size={30} /> : 'Add to cart'}
                   </Button>
                 </CardActions>
               </Card>
