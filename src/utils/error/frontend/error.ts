@@ -1,15 +1,6 @@
 import axios, { AxiosError } from 'axios';
 
 export function getError(err: unknown): string {
-  // if (err.response.data && err.response.data.errormsg) {
-  //   const status: number = err.response.data.status;
-  //   if (status >= 500) {
-  //     return 'Internal Server Error'; // errormsg is server generated, potentially technical revealing...
-  //   }
-  //   return err.response.data.errormsg;
-  // } else {
-  //   return err.message;
-  // }
   if (axios.isAxiosError(err)) {
     const axErr: AxiosError = err;
     if (axErr.response?.data && axErr.response?.data.errormsg) {
