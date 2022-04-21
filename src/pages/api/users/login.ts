@@ -5,6 +5,7 @@ import bcrypt from 'bcryptjs';
 
 import User from '../../../db/models/User';
 import db from '../../../db/db';
+import { onError, onNoMatch } from '../../../utils/error/backend/error';
 import { signToken } from '../../../utils/auth';
 
 export interface IFTokenUser {
@@ -15,21 +16,13 @@ export interface IFTokenUser {
   isAdmin: boolean;
 }
 
-export type LoginRes = IFTokenUser | { errormsg: string };
-
 // https://stackoverflow.com/questions/67009540/property-status-does-not-exist-on-type-serverresponse-ts2339
 const handler = nc<NextApiRequest, NextApiResponse>({
-  onError(error, req, res) {
-    // eslint-disable-next-line no-console
-    console.log('db error');
-    res.status(501).json({ error: `Sorry something Happened! ${error.message}` });
-  },
-  onNoMatch(req, res) {
-    res.status(405).json({ error: `Method '${req.method}' Not Allowed` });
-  },
+  onError,
+  onNoMatch,
 });
 
-handler.post(async (req: NextApiRequest, res: NextApiResponse<LoginRes>) => {
+handler.post(async (req: NextApiRequest, res: NextApiResponse<IFTokenUser | { errormsg: string; status: number }>) => {
   await db.connect();
   const user = await User.findOne({ email: req.body.email });
   await db.disconnect();
@@ -44,7 +37,8 @@ handler.post(async (req: NextApiRequest, res: NextApiResponse<LoginRes>) => {
       isAdmin: user.isAdmin,
     });
   } else {
-    res.status(401).send({ errormsg: 'Invalid user or password' });
+    const status = 401;
+    res.status(status).send({ errormsg: 'Invalid user or password', status });
   }
 });
 

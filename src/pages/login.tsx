@@ -15,8 +15,9 @@ import { Controller, useForm } from 'react-hook-form';
 
 import Layout from '../components/Layout';
 import Link from '../components/Link';
-import { LoginRes, IFTokenUser } from '../pages/api/users/login';
+import { IFTokenUser } from '../pages/api/users/login';
 import StateContext from '../utils/StateContext';
+import { getError } from '../utils/error/frontend/error';
 
 const PREFIX = 'LoginPage';
 
@@ -65,13 +66,13 @@ const LoginPage: NextPage = () => {
   const submitHandler = async ({ email, password }: IFFormData): Promise<void> => {
     try {
       setLoading(true);
-      const { data } = await axios.post<LoginRes>('/api/users/login', { email, password });
-      dispatch({ type: 'USER_LOGIN', payload: data as IFTokenUser });
-    } catch (err) {
+      const { data } = await axios.post<IFTokenUser>('/api/users/login', { email, password });
+      dispatch({ type: 'USER_LOGIN', payload: data });
+    } catch (err: unknown) {
       setLoading(false);
       setAlert({
         open: true,
-        message: err.response.data ? err.response.data.errormsg : err.message,
+        message: getError(err),
         backgroundColor: '#FF3232',
       });
     }

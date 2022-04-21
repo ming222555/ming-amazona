@@ -4,17 +4,12 @@ import Product from '../../db/models/Product';
 import User from '../../db/models/User';
 import db from '../../db/db';
 import data from '../../db/seeddata';
+import { onError, onNoMatch } from '../../utils/error/backend/error';
 
 // https://stackoverflow.com/questions/67009540/property-status-does-not-exist-on-type-serverresponse-ts2339
 const handler = nc<NextApiRequest, NextApiResponse>({
-  onError(error, req, res) {
-    // eslint-disable-next-line no-console
-    console.log('db error');
-    res.status(501).json({ error: `Sorry something Happened! ${error.message}` });
-  },
-  onNoMatch(req, res) {
-    res.status(405).json({ error: `Method '${req.method}' Not Allowed` });
-  },
+  onError,
+  onNoMatch,
 });
 
 handler.get(async (req, res) => {
@@ -24,7 +19,8 @@ handler.get(async (req, res) => {
   await Product.deleteMany();
   await Product.insertMany(data.products);
   await db.disconnect();
-  res.send({ message: 'seeded successfully' });
+  const status = 201;
+  res.status(status).send({ message: 'seeded successfully', status });
 });
 
 export default handler;
