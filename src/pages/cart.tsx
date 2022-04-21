@@ -26,6 +26,7 @@ import StateContext from '../utils/StateContext';
 import Link from '../components/Link';
 import Layout from '../components/Layout';
 import { IFProduct, IFCartItem } from '../db/rdbms_tbl_cols';
+import { getError } from '../utils/error/frontend/error';
 
 function numList(num: number): JSX.Element[] {
   const jsxArry: JSX.Element[] = [];
@@ -52,17 +53,30 @@ const CartPage: NextPage = () => {
     backgroundColor: '',
   });
 
+  const [loading, setLoading] = useState(false);
+
   async function updateCartHandler(item: IFCartItem, quantity: number): Promise<void> {
-    const { data } = await axios.get<IFProduct>(`/api/products/${item._id}`);
-    if (data.countInStock < quantity) {
+    try {
+      setLoading(true);
+      const { data } = await axios.get<IFProduct>(`/api/products/${item._id}`);
+      if (data.countInStock < quantity) {
+        setAlert({
+          open: true,
+          message: 'Sorry. Product is out of stock',
+          backgroundColor: '#FF3232',
+        });
+        return;
+      }
+      dispatch({ type: 'CART_ADD_ITEM', payload: { ...item, quantity } });
+      setLoading(false);
+    } catch (err: unknown) {
+      setLoading(false);
       setAlert({
         open: true,
-        message: 'Sorry. Product is out of stock',
+        message: getError(err),
         backgroundColor: '#FF3232',
       });
-      return;
     }
-    dispatch({ type: 'CART_ADD_ITEM', payload: { ...item, quantity } });
   }
 
   function removeItemHandler(id: string): void {
@@ -114,13 +128,14 @@ const CartPage: NextPage = () => {
                             onChange={(e): void => {
                               updateCartHandler(item, e.target.value as number);
                             }}
+                            disabled={loading}
                           >
                             {numList(item.countInStock)}
                           </Select>
                         </TableCell>
                         <TableCell align="right">${item.price}</TableCell>
                         <TableCell align="right">
-                          <IconButton onClick={(): void => removeItemHandler(item._id)}>
+                          <IconButton onClick={(): void => removeItemHandler(item._id)} disabled={loading}>
                             <DeleteIcon />
                           </IconButton>
                         </TableCell>
@@ -140,7 +155,13 @@ const CartPage: NextPage = () => {
                     </Typography>
                   </ListItem>
                   <ListItem>
-                    <Button onClick={checkoutHandler} variant="contained" color="secondary" fullWidth>
+                    <Button
+                      onClick={checkoutHandler}
+                      variant="contained"
+                      color="secondary"
+                      fullWidth
+                      disabled={loading}
+                    >
                       Check Out
                     </Button>
                   </ListItem>
