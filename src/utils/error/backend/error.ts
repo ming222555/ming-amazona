@@ -1,7 +1,7 @@
 import db from '../../../db/db';
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export async function onError(err: any, req: any, res: any): Promise<void> {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars
+export async function onError(err: any, req: any, res: any, next: any): Promise<void> {
   await db.disconnect();
   const status = 500;
   res.status(status).send({ errormsg: err.message, status });
