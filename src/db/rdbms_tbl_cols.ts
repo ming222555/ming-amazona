@@ -1,14 +1,16 @@
+// stuff without fields _id, createdAt and updatedAt are NOT a database table!
+// values of _id, createdAt and updatedAt are auto gen from mongo.
+
 export interface IFUser {
   _id: string;
   name: string;
   email: string;
   password: string;
   isAdmin: boolean;
-  createdAt: string;
-  updatedAt: string;
+  createdAt: number;
+  updatedAt: number;
 }
 
-// values of _id, createdAt and updatedAt are auto gen from mongo.
 export interface IFProduct {
   _id: string;
   name: string;
@@ -23,15 +25,21 @@ export interface IFProduct {
   numReviews: number;
   countInStock: number;
   description: string;
-  createdAt: string;
-  updatedAt: string;
+  createdAt: number;
+  updatedAt: number;
 }
 
 export interface IFCartItem extends IFProduct {
   quantity: number;
 }
 
-// stuff without fields _id, createdAt and updatedAt are NOT a database table!
+export interface IFOrderItem {
+  product_id: string;
+  name: string;
+  quantity: number;
+  image: string;
+  price: number;
+}
 
 export interface IFShippingAddress {
   fullName: string;
@@ -39,4 +47,22 @@ export interface IFShippingAddress {
   city: string;
   postalCode: string;
   country: string;
+}
+
+export interface IFOrder {
+  _id: string;
+  user_id: string;
+  orderItems: IFOrderItem[];
+  shippingAddress: IFShippingAddress;
+  paymentMode: string;
+  itemsPrice: number;
+  shippingPrice: number;
+  taxPrice: number;
+  totalPrice: number;
+  isPaid: boolean;
+  isDelivered: boolean;
+  paidAt: number;
+  deliveredAt: number;
+  createdAt: number;
+  updatedAt: number;
 }

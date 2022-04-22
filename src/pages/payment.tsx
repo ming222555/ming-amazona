@@ -25,7 +25,9 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
 import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
+import Snackbar from '@mui/material/Snackbar';
 import CircularProgress from '@mui/material/CircularProgress';
+import Divider from '@mui/material/Divider';
 import { styled } from '@mui/material/styles';
 
 import Cookies from 'js-cookie';
@@ -34,9 +36,9 @@ import axios from 'axios';
 
 import Layout from '../components/Layout';
 import Link from '../components/Link';
-// import { IFPayment } from '../db/rdbms_tbl_cols';
-// import { LoginRes, IFTokenUser } from '../pages/api/users/login';
+import { IFOrder } from '../db/rdbms_tbl_cols';
 import StateContext from '../utils/StateContext';
+import { getError } from '../utils/error/frontend/error';
 import CheckoutWizard from '../components/shared/checkoutWizard';
 
 const PREFIX = 'PaymentPage';
@@ -79,25 +81,25 @@ const PaymentPage: NextPage = () => {
     userInfo,
   } = state;
 
+  const [alert, setAlert] = useState({
+    open: false,
+    message: '',
+    backgroundColor: '',
+  });
+
   const [dialogOpen, setDialogOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const submitHandler = ({ paymentMode }: IFFormData): void => {
-    // dispatch({
-    //   type: 'SAVE_SHIPPING_ADDRESS',
-    //   payload: { fullName, address, city, postalCode, country } as IFPayment,
-    // });
-    // router.push('/payment');
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const xxxxx = paymentMode;
     setDialogOpen(true);
   };
 
   const placeOrderHandler = async (): Promise<void> => {
     try {
       setLoading(true);
-      const { data } = await axios.post<LoginRes>(
+      const { data } = await axios.post<IFOrder>(
         '/api/orders',
         {
           orderItems: cartItems,
@@ -114,14 +116,15 @@ const PaymentPage: NextPage = () => {
           },
         },
       );
+      // eslint-disable-next-line no-console
+      console.log('IFOrder', JSON.stringify(data));
       dispatch({ type: 'CART_CLEAR' });
-      setLoading(false);
       router.push(`/order/${data._id}`);
-    } catch (err) {
+    } catch (err: unknown) {
       setLoading(false);
       setAlert({
         open: true,
-        message: err.response.data ? err.response.data.errormsg : err.message,
+        message: getError(err),
         backgroundColor: '#FF3232',
       });
     }
@@ -234,7 +237,6 @@ const PaymentPage: NextPage = () => {
               </ListItem>
             </List>
           </StyledForm>
-          {/* <Dialog open={true} fullWidth> */}
           <Dialog
             open={dialogOpen}
             PaperProps={{
@@ -245,7 +247,10 @@ const PaymentPage: NextPage = () => {
                 // },
                 minWidth: {
                   xs: '100vw',
-                  md: 800,
+                  md: '75%',
+                },
+                maxWidth: {
+                  md: 1200,
                 },
               },
             }}
@@ -253,6 +258,7 @@ const PaymentPage: NextPage = () => {
             <DialogTitle style={{ position: 'relative' }}>
               <CheckoutWizard activeStep={3} />
               <IconButton
+                disabled={loading}
                 onClick={(): void => setDialogOpen(false)}
                 style={{ position: 'absolute', background: '#d32f2f' }}
                 sx={{
@@ -352,44 +358,48 @@ const PaymentPage: NextPage = () => {
                       </ListItem>
                       <ListItem>
                         <Grid container spacing={4}>
-                          <Grid item xs={6}>
+                          <Grid item xs={3}>
                             <Typography>Items:</Typography>
                           </Grid>
-                          <Grid item xs={6}>
+                          <Grid item xs={9} style={{ flexBasis: 'auto', marginLeft: 'auto' }}>
                             <Typography align="right">${cartItemsPrice}</Typography>
                           </Grid>
                         </Grid>
                       </ListItem>
                       <ListItem>
                         <Grid container spacing={4}>
-                          <Grid item xs={6}>
+                          <Grid item xs={3}>
                             <Typography>Tax:</Typography>
                           </Grid>
-                          <Grid item xs={6}>
+                          <Grid item xs={9} style={{ flexBasis: 'auto', marginLeft: 'auto' }}>
                             <Typography align="right">${cartTaxPrice}</Typography>
                           </Grid>
                         </Grid>
                       </ListItem>
                       <ListItem>
                         <Grid container spacing={4}>
-                          <Grid item xs={6}>
+                          <Grid item xs={3}>
                             <Typography>Shipping:</Typography>
                           </Grid>
-                          <Grid item xs={6}>
+                          <Grid item xs={9} style={{ flexBasis: 'auto', marginLeft: 'auto' }}>
                             <Typography align="right">${cartShippingPrice}</Typography>
                           </Grid>
                         </Grid>
                       </ListItem>
                       <ListItem>
+                        <Divider style={{ width: '100%' }} />
+                      </ListItem>
+                      <ListItem>
                         <Grid container spacing={4}>
-                          <Grid item xs={6}>
+                          <Grid item xs={3}>
                             <Typography>
                               <strong>Total:</strong>
                             </Typography>
                           </Grid>
-                          <Grid item xs={6}>
+                          <Grid item xs={9} style={{ flexBasis: 'auto', marginLeft: 'auto' }}>
                             <Typography align="right">
-                              <strong>${cartTotalPrice}</strong>
+                              {/* <strong> */}${cartTotalPrice}
+                              {/* </strong> */}
                             </Typography>
                           </Grid>
                         </Grid>
@@ -411,6 +421,14 @@ const PaymentPage: NextPage = () => {
               </Grid>
             </DialogContent>
           </Dialog>
+          <Snackbar
+            open={alert.open}
+            message={alert.message}
+            ContentProps={{ style: { backgroundColor: alert.backgroundColor } }}
+            anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+            onClose={(): void => setAlert({ ...alert, open: false })}
+            autoHideDuration={4000}
+          />
         </>
       )}
     </Layout>

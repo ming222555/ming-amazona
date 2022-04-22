@@ -55,6 +55,9 @@ function reducer(state: IFState, action: IFAction): IFState {
       return { ...state, cart: { ...state.cart, shippingAddress: action.payload } };
     case 'SET_SHIPPING_ADDRESS':
       return { ...state, cart: { ...state.cart, shippingAddress: action.payload } };
+    case 'CART_CLEAR':
+      cookieRemove('cartItems');
+      return { ...state, cart: { ...state.cart, cartItems: initialCartItemsState } };
     case 'USER_LOGIN':
       cookieSet('userInfo', action.payload);
       return { ...state, userInfo: action.payload };
@@ -62,7 +65,11 @@ function reducer(state: IFState, action: IFAction): IFState {
       cookieRemove('userInfo');
       cookieRemove('cartItems');
       cookieRemove('shippingAddress');
-      return { ...state, userInfo: initialTokenUserState, cart: { ...state.cart, cartItems: [] } };
+      return {
+        ...state,
+        userInfo: initialTokenUserState,
+        cart: { cartItems: initialCartItemsState, shippingAddress: initialShippingAddressState },
+      };
     default:
       return state;
   }

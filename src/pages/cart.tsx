@@ -59,6 +59,7 @@ const CartPage: NextPage = () => {
     try {
       setLoading(true);
       const { data } = await axios.get<IFProduct>(`/api/products/${item._id}`);
+      setLoading(false);
       if (data.countInStock < quantity) {
         setAlert({
           open: true,
@@ -68,7 +69,6 @@ const CartPage: NextPage = () => {
         return;
       }
       dispatch({ type: 'CART_ADD_ITEM', payload: { ...item, quantity } });
-      setLoading(false);
     } catch (err: unknown) {
       setLoading(false);
       setAlert({

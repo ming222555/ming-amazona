@@ -1,3 +1,4 @@
+import { NextApiRequest, NextApiResponse } from 'next';
 import jwt from 'jsonwebtoken';
 import 'dotenv/config';
 
@@ -16,6 +17,26 @@ const signToken = (user: IFUser): string => {
       expiresIn: '30d',
     },
   );
+};
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const isAuth = async (req: NextApiRequest, res: NextApiResponse, next: any): Promise<void> => {
+  const { authorization } = req.headers;
+  const status = 401;
+  if (authorization) {
+    // Bearer xxx => xxx
+    const token = authorization.slice(7, authorization.length);
+    jwt.verify(token, process.env.JWT_SECRET as string, (err, decode) => {
+      if (err) {
+        res.status(status).send({ errormsg: 'Invalid token', status });
+      } else {
+        req.body.appended_user = decode;
+        next();
+      }
+    });
+  } else {
+    res.status(status).send({ errormsg: 'Token not found', status });
+  }
 };
 
 export { signToken };

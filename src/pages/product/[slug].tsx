@@ -57,6 +57,7 @@ const ProductPage: NextPage<Props> = ({ product }: Props) => {
       if (existCartItem) {
         const quantity = existCartItem.quantity + 1;
         if (data.countInStock < quantity) {
+          setLoading(false);
           setAlert({
             open: true,
             message: 'Sorry. Product is out of stock',
