@@ -30,7 +30,11 @@ export const isAuth = async (req: NextApiRequest, res: NextApiResponse, next: an
       if (err) {
         res.status(status).send({ errormsg: 'Invalid token', status });
       } else {
+        if (!req.body) {
+          req.body = {};
+        }
         req.body.appended_user = decode;
+
         next();
       }
     });

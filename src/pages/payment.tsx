@@ -30,9 +30,9 @@ import CircularProgress from '@mui/material/CircularProgress';
 import Divider from '@mui/material/Divider';
 import { styled } from '@mui/material/styles';
 
+import axios from 'axios';
 import Cookies from 'js-cookie';
 import { useForm } from 'react-hook-form';
-import axios from 'axios';
 
 import Layout from '../components/Layout';
 import Link from '../components/Link';
@@ -116,8 +116,6 @@ const PaymentPage: NextPage = () => {
           },
         },
       );
-      // eslint-disable-next-line no-console
-      console.log('IFOrder', JSON.stringify(data));
       dispatch({ type: 'CART_CLEAR' });
       router.push(`/order/${data._id}`);
     } catch (err: unknown) {

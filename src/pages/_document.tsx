@@ -59,7 +59,7 @@ MyDocument.getInitialProps = async (ctx) => {
   // However, be aware that it can have global side effects.
   const cache = createEmotionCache();
   const { extractCriticalToChunks } = createEmotionServer(cache);
-  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
+  // eslint-next-line @typescript-eslint/explicit-function-return-type
   ctx.renderPage = () =>
     originalRenderPage({
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
