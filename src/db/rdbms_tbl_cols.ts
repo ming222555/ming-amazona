@@ -66,3 +66,10 @@ export interface IFOrder {
   createdAt: number;
   updatedAt: number;
 }
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+interface IFOrderWithPaymentPayPalResult extends IFOrder {
+  id: string;
+  status: string;
+  email_address: string;
+}

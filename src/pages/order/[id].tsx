@@ -10,34 +10,30 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import TableCell from '@mui/material/TableCell';
 import TableBody from '@mui/material/TableBody';
-import Card from '@mui/material/Card';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
-import Button from '@mui/material/Button';
 import Snackbar from '@mui/material/Snackbar';
-// import CircularProgress from '@mui/material/CircularProgress';
+import CircularProgress from '@mui/material/CircularProgress';
 import Divider from '@mui/material/Divider';
 import Skeleton from '@mui/material/Skeleton';
-import { styled } from '@mui/material/styles';
 
 import axios from 'axios';
 import Cookies from 'js-cookie';
+import { PayPalButtons, usePayPalScriptReducer, SCRIPT_LOADING_STATE } from '@paypal/react-paypal-js';
+import moment from 'moment';
 
 import Layout from '../../components/Layout';
 import { IFOrder } from '../../db/rdbms_tbl_cols';
 import StateContext from '../../utils/StateContext';
 import { getError } from '../../utils/error/frontend/error';
-import CheckoutWizard from '../../components/shared/checkoutWizard';
-
-const StyledCard = styled(Card)({
-  marginTop: 4,
-});
+import StyledCard from '../../components/shared/StyledCard';
 
 interface Props {
   id: string;
 }
 
 const OrderPage: NextPage<Props> = ({ id }: Props) => {
+  const [{ isPending }, paypalDispatch] = usePayPalScriptReducer();
   const { state } = useContext(StateContext);
   const { userInfo } = state;
 
@@ -47,20 +43,16 @@ const OrderPage: NextPage<Props> = ({ id }: Props) => {
     backgroundColor: '',
   });
 
-  const [gotoLogin, setGotoLogin] = useState(false);
   const [order, setOrder] = useState<IFOrder | null>(null);
   const router = useRouter();
-
-  if (gotoLogin) {
-    router.push(`/login?redirect=/order/${id}`);
-  }
 
   useEffect((): void => {
     const szUserInfo = Cookies.get('userInfo');
 
     if (!szUserInfo) {
-      setGotoLogin(true);
+      router.push(`/login?redirect=/order/${id}`);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect((): void => {
@@ -79,17 +71,87 @@ const OrderPage: NextPage<Props> = ({ id }: Props) => {
           });
         }
       };
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       fetchOrder();
     }
   }, [userInfo.token, id]);
+
+  useEffect((): void => {
+    if (order) {
+      const loadPaypalScript = async (): Promise<void> => {
+        try {
+          const { data: clientId } = await axios.get<string>('/api/keys/paypal', {
+            headers: { authorization: `Bearer ${userInfo.token}` },
+          });
+          paypalDispatch({
+            type: 'resetOptions',
+            value: { 'client-id': clientId, currency: 'USD' },
+          });
+          paypalDispatch({
+            type: 'setLoadingStatus',
+            value: SCRIPT_LOADING_STATE.PENDING,
+          });
+        } catch (err: unknown) {
+          setAlert({
+            open: true,
+            message: getError(err),
+            backgroundColor: '#FF3232',
+          });
+        }
+      };
+      loadPaypalScript();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [order]);
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  function createOrder(data: any, actions: any): Promise<string> {
+    return actions.order
+      .create({
+        purchase_units: [{ amount: { value: order?.totalPrice } }],
+      })
+      .then((orderID: string) => {
+        return orderID;
+      });
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  function onApprove(data: any, actions: any): Promise<any> {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    return actions.order.capture().then(async function (details: any): Promise<void> {
+      try {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const { data } = await axios.put<IFOrder>(`/api/orders/${order?._id}/pay`, details, {
+          headers: { authorization: `Bearer ${userInfo.token}` },
+        });
+        setAlert({
+          open: true,
+          message: 'Order is paid',
+          backgroundColor: '#4BB543',
+        });
+        setOrder(data);
+      } catch (err: unknown) {
+        setAlert({
+          open: true,
+          message: getError(err),
+          backgroundColor: '#FF3232',
+        });
+      }
+    });
+  }
+
+  function onError(err: unknown): void {
+    setAlert({
+      open: true,
+      message: getError(err),
+      backgroundColor: '#FF3232',
+    });
+  }
 
   return (
     <Layout title="Order">
       <Typography variant="h1">Order {id}</Typography>
       {order ? (
         <>
-          <CheckoutWizard activeStep={3} />
           <Grid container spacing={1}>
             <Grid item md={9} xs={12}>
               <StyledCard>
@@ -122,7 +184,10 @@ const OrderPage: NextPage<Props> = ({ id }: Props) => {
                   </ListItem>
                   <ListItem>
                     <Typography component="span" style={{ fontSize: '1rem' }}>
-                      Status: {order.isPaid ? `paid at ${order.paidAt}` : 'not paid'}
+                      Status:{' '}
+                      {order.isPaid
+                        ? `paid at ${moment(order.paidAt).local().format('dddd, MMMM Do, YYYY h:mm A')}`
+                        : 'not paid'}
                     </Typography>
                   </ListItem>
                 </List>
@@ -222,18 +287,21 @@ const OrderPage: NextPage<Props> = ({ id }: Props) => {
                       </Grid>
                     </Grid>
                   </ListItem>
-                  <ListItem>
-                    <Button
-                      variant="contained"
-                      color="secondary"
-                      // disabled={loading}
-                      // onClick={placeOrderHandler}
-                      fullWidth
-                    >
-                      {/* {loading ? <CircularProgress size={30} /> : 'Place Order'} */}
-                      Pay Now
-                    </Button>
-                  </ListItem>
+                  {!order.isPaid && (
+                    <ListItem>
+                      {isPending ? (
+                        <CircularProgress />
+                      ) : (
+                        <div style={{ width: '100%' }}>
+                          <PayPalButtons
+                            createOrder={createOrder}
+                            onApprove={onApprove}
+                            onError={onError}
+                          ></PayPalButtons>
+                        </div>
+                      )}
+                    </ListItem>
+                  )}
                 </List>
               </StyledCard>
             </Grid>
@@ -257,136 +325,133 @@ const OrderPage: NextPage<Props> = ({ id }: Props) => {
           autoHideDuration={4000}
         />
       ) : (
-        <>
-          <CheckoutWizard activeStep={3} />
-          <Grid container spacing={1}>
-            <Grid item md={9} xs={12}>
-              <StyledCard>
-                <List>
-                  <ListItem>
-                    <Typography variant="h2">Shipping Address</Typography>
-                  </ListItem>
-                  <ListItem>
-                    <Typography component="span" style={{ fontSize: '1rem' }}>
-                      <Skeleton variant="rectangular" width="8rem" />
-                    </Typography>
-                  </ListItem>
-                </List>
-              </StyledCard>
-              <StyledCard>
-                <List>
-                  <ListItem>
-                    <Typography variant="h2">Payment Method</Typography>
-                  </ListItem>
-                  <ListItem>
-                    <Typography component="span" style={{ fontSize: '1rem' }}>
-                      <Skeleton variant="rectangular" width="8rem" />
-                    </Typography>
-                  </ListItem>
-                </List>
-              </StyledCard>
-              <StyledCard>
-                <List>
-                  <ListItem>
-                    <Typography variant="h2">Order Items</Typography>
-                  </ListItem>
-                  <ListItem>
-                    <TableContainer>
-                      <Table>
-                        <TableHead>
-                          <TableRow>
-                            <TableCell>Image</TableCell>
-                            <TableCell>Name</TableCell>
-                            <TableCell align="right">Quantity</TableCell>
-                            <TableCell align="right">Price</TableCell>
-                          </TableRow>
-                        </TableHead>
-                        <TableBody>
-                          <TableRow>
-                            <TableCell>
-                              <Skeleton variant="rectangular" width="100%" />
-                            </TableCell>
-                            <TableCell>
-                              <Skeleton variant="rectangular" width="100%" />
-                            </TableCell>
-                            <TableCell align="right">
-                              <Skeleton variant="rectangular" width="100%" />
-                            </TableCell>
-                            <TableCell align="right">
-                              <Skeleton variant="rectangular" width="100%" />
-                            </TableCell>
-                          </TableRow>
-                        </TableBody>
-                      </Table>
-                    </TableContainer>
-                  </ListItem>
-                </List>
-              </StyledCard>
-            </Grid>
-            <Grid item md={3} xs={12}>
-              <StyledCard>
-                <List>
-                  <ListItem>
-                    <Typography variant="h2">Order&nbsp;Summary</Typography>
-                  </ListItem>
-                  <ListItem>
-                    <Grid container spacing={4}>
-                      <Grid item xs={3}>
-                        <Typography>Items:</Typography>
-                      </Grid>
-                      <Grid item xs={9} style={{ flexBasis: 'auto', marginLeft: 'auto' }}>
-                        <Typography align="right">
-                          <Skeleton variant="rectangular" width="3rem" />
-                        </Typography>
-                      </Grid>
-                    </Grid>
-                  </ListItem>
-                  <ListItem>
-                    <Grid container spacing={4}>
-                      <Grid item xs={3}>
-                        <Typography>Tax:</Typography>
-                      </Grid>
-                      <Grid item xs={9} style={{ flexBasis: 'auto', marginLeft: 'auto' }}>
-                        <Typography align="right">
-                          <Skeleton variant="rectangular" width="3rem" />
-                        </Typography>
-                      </Grid>
-                    </Grid>
-                  </ListItem>
-                  <ListItem>
-                    <Grid container spacing={4}>
-                      <Grid item xs={3}>
-                        <Typography>Shipping:</Typography>
-                      </Grid>
-                      <Grid item xs={9} style={{ flexBasis: 'auto', marginLeft: 'auto' }}>
-                        <Typography align="right">
-                          <Skeleton variant="rectangular" width="3rem" />
-                        </Typography>
-                      </Grid>
-                    </Grid>
-                  </ListItem>
-                  <ListItem>
-                    <Divider style={{ width: '3rem' }} />
-                  </ListItem>
-                  <ListItem>
-                    <Grid container spacing={4}>
-                      <Grid item xs={3}>
-                        <Typography>
-                          <strong>Total:</strong>
-                        </Typography>
-                      </Grid>
-                      <Grid item xs={9} style={{ flexBasis: 'auto', marginLeft: 'auto' }}>
-                        <Typography align="right">
-                          <Skeleton variant="rectangular" width="3rem" />
-                        </Typography>
-                      </Grid>
-                    </Grid>
-                  </ListItem>
-                </List>
-              </StyledCard>
-            </Grid>
+        <Grid container spacing={1}>
+          <Grid item md={9} xs={12}>
+            <StyledCard>
+              <List>
+                <ListItem>
+                  <Typography variant="h2">Shipping Address</Typography>
+                </ListItem>
+                <ListItem>
+                  <Typography component="span" style={{ fontSize: '1rem' }}>
+                    <Skeleton variant="rectangular" width="8rem" />
+                  </Typography>
+                </ListItem>
+              </List>
+            </StyledCard>
+            <StyledCard>
+              <List>
+                <ListItem>
+                  <Typography variant="h2">Payment Method</Typography>
+                </ListItem>
+                <ListItem>
+                  <Typography component="span" style={{ fontSize: '1rem' }}>
+                    <Skeleton variant="rectangular" width="8rem" />
+                  </Typography>
+                </ListItem>
+              </List>
+            </StyledCard>
+            <StyledCard>
+              <List>
+                <ListItem>
+                  <Typography variant="h2">Order Items</Typography>
+                </ListItem>
+                <ListItem>
+                  <TableContainer>
+                    <Table>
+                      <TableHead>
+                        <TableRow>
+                          <TableCell>Image</TableCell>
+                          <TableCell>Name</TableCell>
+                          <TableCell align="right">Quantity</TableCell>
+                          <TableCell align="right">Price</TableCell>
+                        </TableRow>
+                      </TableHead>
+                      <TableBody>
+                        <TableRow>
+                          <TableCell>
+                            <Skeleton variant="rectangular" width="100%" />
+                          </TableCell>
+                          <TableCell>
+                            <Skeleton variant="rectangular" width="100%" />
+                          </TableCell>
+                          <TableCell align="right">
+                            <Skeleton variant="rectangular" width="100%" />
+                          </TableCell>
+                          <TableCell align="right">
+                            <Skeleton variant="rectangular" width="100%" />
+                          </TableCell>
+                        </TableRow>
+                      </TableBody>
+                    </Table>
+                  </TableContainer>
+                </ListItem>
+              </List>
+            </StyledCard>
           </Grid>
-        </>
+          <Grid item md={3} xs={12}>
+            <StyledCard>
+              <List>
+                <ListItem>
+                  <Typography variant="h2">Order&nbsp;Summary</Typography>
+                </ListItem>
+                <ListItem>
+                  <Grid container spacing={4}>
+                    <Grid item xs={3}>
+                      <Typography>Items:</Typography>
+                    </Grid>
+                    <Grid item xs={9} style={{ flexBasis: 'auto', marginLeft: 'auto' }}>
+                      <Typography align="right">
+                        <Skeleton variant="rectangular" width="3rem" />
+                      </Typography>
+                    </Grid>
+                  </Grid>
+                </ListItem>
+                <ListItem>
+                  <Grid container spacing={4}>
+                    <Grid item xs={3}>
+                      <Typography>Tax:</Typography>
+                    </Grid>
+                    <Grid item xs={9} style={{ flexBasis: 'auto', marginLeft: 'auto' }}>
+                      <Typography align="right">
+                        <Skeleton variant="rectangular" width="3rem" />
+                      </Typography>
+                    </Grid>
+                  </Grid>
+                </ListItem>
+                <ListItem>
+                  <Grid container spacing={4}>
+                    <Grid item xs={3}>
+                      <Typography>Shipping:</Typography>
+                    </Grid>
+                    <Grid item xs={9} style={{ flexBasis: 'auto', marginLeft: 'auto' }}>
+                      <Typography align="right">
+                        <Skeleton variant="rectangular" width="3rem" />
+                      </Typography>
+                    </Grid>
+                  </Grid>
+                </ListItem>
+                <ListItem>
+                  <Divider style={{ width: '3rem' }} />
+                </ListItem>
+                <ListItem>
+                  <Grid container spacing={4}>
+                    <Grid item xs={3}>
+                      <Typography>
+                        <strong>Total:</strong>
+                      </Typography>
+                    </Grid>
+                    <Grid item xs={9} style={{ flexBasis: 'auto', marginLeft: 'auto' }}>
+                      <Typography align="right">
+                        <Skeleton variant="rectangular" width="3rem" />
+                      </Typography>
+                    </Grid>
+                  </Grid>
+                </ListItem>
+              </List>
+            </StyledCard>
+          </Grid>
+        </Grid>
       )}
     </Layout>
   );

@@ -6,6 +6,8 @@ import CssBaseline from '@mui/material/CssBaseline';
 import { CacheProvider, EmotionCache } from '@emotion/react';
 import createEmotionCache from '../../src/createEmotionCache';
 
+import { PayPalScriptProvider } from '@paypal/react-paypal-js';
+
 // import theme from '../Theme';
 import { StateContextProvider } from '../utils/StateContext';
 import ThemeModeAdjust from '../ThemeModeAdjust';
@@ -16,6 +18,11 @@ const clientSideEmotionCache = createEmotionCache();
 interface MyAppProps extends AppProps {
   emotionCache?: EmotionCache;
 }
+
+const initialPPOptions = {
+  'client-id': '',
+  currency: 'USD',
+};
 
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
 export default function MyApp(props: MyAppProps) {
@@ -31,8 +38,10 @@ export default function MyApp(props: MyAppProps) {
       </ThemeProvider> */}
       <StateContextProvider>
         <ThemeModeAdjust>
+          <PayPalScriptProvider options={initialPPOptions} deferLoading={true}>
+            <Component {...pageProps} />
+          </PayPalScriptProvider>
           <CssBaseline />
-          <Component {...pageProps} />
         </ThemeModeAdjust>
       </StateContextProvider>
     </CacheProvider>

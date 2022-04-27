@@ -15,7 +15,7 @@ import Layout from '../components/Layout';
 import Link from '../components/Link';
 import { IFShippingAddress } from '../db/rdbms_tbl_cols';
 import StateContext from '../utils/StateContext';
-import CheckoutWizard from '../components/shared/checkoutWizard';
+import CheckoutWizard from '../components/shared/CheckoutWizard';
 
 const PREFIX = 'ShippingPage';
 

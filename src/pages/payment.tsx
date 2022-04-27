@@ -10,7 +10,6 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import TableCell from '@mui/material/TableCell';
 import TableBody from '@mui/material/TableBody';
-import Card from '@mui/material/Card';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import FormControl from '@mui/material/FormControl';
@@ -39,7 +38,8 @@ import Link from '../components/Link';
 import { IFOrder } from '../db/rdbms_tbl_cols';
 import StateContext from '../utils/StateContext';
 import { getError } from '../utils/error/frontend/error';
-import CheckoutWizard from '../components/shared/checkoutWizard';
+import CheckoutWizard from '../components/shared/CheckoutWizard';
+import StyledCard from '../components/shared/StyledCard';
 
 const PREFIX = 'PaymentPage';
 
@@ -48,10 +48,6 @@ const StyledForm = styled('form')({
     maxWidth: 800,
     margin: 'auto',
   },
-});
-
-const StyledCard = styled(Card)({
-  marginTop: 4,
 });
 
 interface IFFormData {
