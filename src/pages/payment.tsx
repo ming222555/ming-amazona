@@ -63,6 +63,8 @@ function getcartItemsPrice(total = 0, cartItem: IFCartItem): number {
 }
 
 const PaymentPage: NextPage = () => {
+  const gotoOrderPage = useRef(false);
+
   // https://stackoverflow.com/questions/71275687/type-of-handlesubmit-parameter-in-react-hook-form
   const {
     handleSubmit,
@@ -112,6 +114,7 @@ const PaymentPage: NextPage = () => {
           },
         },
       );
+      gotoOrderPage.current = true;
       dispatch({ type: 'CART_CLEAR' });
       router.push(`/order/${data._id}`);
     } catch (err: unknown) {
@@ -188,6 +191,8 @@ const PaymentPage: NextPage = () => {
         <div>
           Cart is empty. <Link href="/">Go shopping</Link>
         </div>
+      ) : gotoOrderPage.current ? (
+        'Redirecting to your Order ...'
       ) : badJsx ? (
         <div>{badJsx}</div>
       ) : (

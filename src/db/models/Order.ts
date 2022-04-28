@@ -30,10 +30,16 @@ const orderSchema = new mongoose.Schema(
     totalPrice: { type: Number, required: true },
     isPaid: { type: Boolean, required: true, default: false },
     isDelivered: { type: Boolean, required: true, default: false },
-    paidAt: { type: Number, required: true, default: 0 }, // epoch
-    deliveredAt: { type: Number, required: true, default: 0 }, // epoch
+    paidAt: { type: Number, required: true, default: 0 },
+    deliveredAt: { type: Number, required: true, default: 0 },
+    createAt: { type: Number, required: true, default: 0 },
   },
-  { timestamps: true },
+  {
+    timestamps: {
+      createdAt: false,
+      updatedAt: true,
+    },
+  },
 );
 
 const Order = mongoose.models.Order || mongoose.model('Order', orderSchema);

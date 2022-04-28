@@ -63,7 +63,7 @@ export interface IFOrder {
   isDelivered: boolean;
   paidAt: number;
   deliveredAt: number;
-  createdAt: number;
+  createAt: number;
   updatedAt: number;
 }
 
