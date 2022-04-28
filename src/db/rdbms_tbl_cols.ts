@@ -11,6 +11,8 @@ export interface IFUser {
   updatedAt: number;
 }
 
+export type IFProfile = Omit<IFUser, '_id' | 'password' | 'createdAt' | 'updatedAt'>;
+
 export interface IFProduct {
   _id: string;
   name: string;

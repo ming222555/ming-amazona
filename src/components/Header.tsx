@@ -185,8 +185,21 @@ export default function Header(): JSX.Element {
         >
           <MenuItem
             component={Link}
+            href="/profile"
+            onClick={(e: React.SyntheticEvent<Element, Event>): void => loginMenuCloseHandlerWithGoto(e, '/profile')}
+            style={{
+              ...theme.typography.tab,
+            }}
+            disableRipple
+          >
+            Profile
+          </MenuItem>
+          <MenuItem
+            component={Link}
             href="/order-history"
-            onClick={(e): void => loginMenuCloseHandlerWithGoto(e, '/order-history')}
+            onClick={(e: React.SyntheticEvent<Element, Event>): void =>
+              loginMenuCloseHandlerWithGoto(e, '/order-history')
+            }
             style={{
               ...theme.typography.tab,
             }}
