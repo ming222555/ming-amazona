@@ -73,6 +73,12 @@ export default function Header(): JSX.Element {
     setAnchorEl(null);
   };
 
+  const loginMenuCloseHandlerWithGoto = (e: React.SyntheticEvent<Element, Event>, goto: string): void => {
+    e.preventDefault();
+    loginMenuCloseHandler();
+    router.push(goto);
+  };
+
   const logoutClickHandler = (e: React.SyntheticEvent<Element, Event>): void => {
     e.preventDefault();
     setAnchorEl(null);
@@ -179,14 +185,14 @@ export default function Header(): JSX.Element {
         >
           <MenuItem
             component={Link}
-            href="/"
-            onClick={loginMenuCloseHandler}
+            href="/order-history"
+            onClick={(e): void => loginMenuCloseHandlerWithGoto(e, '/order-history')}
             style={{
               ...theme.typography.tab,
             }}
             disableRipple
           >
-            123
+            Order History
           </MenuItem>
           <MenuItem
             component={Link}
