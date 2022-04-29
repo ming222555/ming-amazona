@@ -91,7 +91,7 @@ const Home: NextPage<Props> = ({ products }: Props) => {
                   </CardActionArea>
                 </Link>
                 <CardActions>
-                  <Typography>${p.price}</Typography>
+                  <Typography>${p.price.toFixed(2)}</Typography>
                   <Button
                     size="small"
                     color="primary"

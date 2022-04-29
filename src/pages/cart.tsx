@@ -133,7 +133,7 @@ const CartPage: NextPage = () => {
                             {numList(item.countInStock)}
                           </Select>
                         </TableCell>
-                        <TableCell align="right">${item.price}</TableCell>
+                        <TableCell align="right">${item.price.toFixed(2)}</TableCell>
                         <TableCell align="right">
                           <IconButton onClick={(): void => removeItemHandler(item._id)} disabled={loading}>
                             <DeleteIcon />
@@ -151,7 +151,7 @@ const CartPage: NextPage = () => {
                   <ListItem>
                     <Typography variant="h2">
                       Subtotal ({cartItems.reduce((a, c) => a + c.quantity, 0)}) : $
-                      {cartItems.reduce((a, c) => a + c.quantity * c.price, 0)}
+                      {cartItems.reduce((a, c) => a + c.quantity * c.price, 0).toFixed(2)}
                     </Typography>
                   </ListItem>
                   <ListItem>

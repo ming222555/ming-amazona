@@ -338,7 +338,7 @@ const PaymentPage: NextPage = () => {
                                     <Typography>{item.quantity}</Typography>
                                   </TableCell>
                                   <TableCell align="right">
-                                    <Typography>${item.price}</Typography>
+                                    <Typography>${item.price.toFixed(2)}</Typography>
                                   </TableCell>
                                 </TableRow>
                               ))}
@@ -361,7 +361,7 @@ const PaymentPage: NextPage = () => {
                             <Typography>Items:</Typography>
                           </Grid>
                           <Grid item xs={9} style={{ flexBasis: 'auto', marginLeft: 'auto' }}>
-                            <Typography align="right">${cartItemsPrice}</Typography>
+                            <Typography align="right">${cartItemsPrice.toFixed(2)}</Typography>
                           </Grid>
                         </Grid>
                       </ListItem>
@@ -371,7 +371,7 @@ const PaymentPage: NextPage = () => {
                             <Typography>Tax:</Typography>
                           </Grid>
                           <Grid item xs={9} style={{ flexBasis: 'auto', marginLeft: 'auto' }}>
-                            <Typography align="right">${cartTaxPrice}</Typography>
+                            <Typography align="right">${cartTaxPrice.toFixed(2)}</Typography>
                           </Grid>
                         </Grid>
                       </ListItem>
@@ -381,7 +381,7 @@ const PaymentPage: NextPage = () => {
                             <Typography>Shipping:</Typography>
                           </Grid>
                           <Grid item xs={9} style={{ flexBasis: 'auto', marginLeft: 'auto' }}>
-                            <Typography align="right">${cartShippingPrice}</Typography>
+                            <Typography align="right">${cartShippingPrice.toFixed(2)}</Typography>
                           </Grid>
                         </Grid>
                       </ListItem>
@@ -397,7 +397,7 @@ const PaymentPage: NextPage = () => {
                           </Grid>
                           <Grid item xs={9} style={{ flexBasis: 'auto', marginLeft: 'auto' }}>
                             <Typography align="right">
-                              {/* <strong> */}${cartTotalPrice}
+                              {/* <strong> */}${cartTotalPrice.toFixed(2)}
                               {/* </strong> */}
                             </Typography>
                           </Grid>

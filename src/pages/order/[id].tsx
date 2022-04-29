@@ -225,7 +225,7 @@ const OrderPage: NextPage<Props> = ({ id }: Props) => {
                                 <Typography>{item.quantity}</Typography>
                               </TableCell>
                               <TableCell align="right">
-                                <Typography>${item.price}</Typography>
+                                <Typography>${item.price.toFixed(2)}</Typography>
                               </TableCell>
                             </TableRow>
                           ))}
@@ -248,7 +248,7 @@ const OrderPage: NextPage<Props> = ({ id }: Props) => {
                         <Typography>Items:</Typography>
                       </Grid>
                       <Grid item xs={9} style={{ flexBasis: 'auto', marginLeft: 'auto' }}>
-                        <Typography align="right">${order.itemsPrice}</Typography>
+                        <Typography align="right">${order.itemsPrice.toFixed(2)}</Typography>
                       </Grid>
                     </Grid>
                   </ListItem>
@@ -258,7 +258,7 @@ const OrderPage: NextPage<Props> = ({ id }: Props) => {
                         <Typography>Tax:</Typography>
                       </Grid>
                       <Grid item xs={9} style={{ flexBasis: 'auto', marginLeft: 'auto' }}>
-                        <Typography align="right">${order.taxPrice}</Typography>
+                        <Typography align="right">${order.taxPrice.toFixed(2)}</Typography>
                       </Grid>
                     </Grid>
                   </ListItem>
@@ -268,7 +268,7 @@ const OrderPage: NextPage<Props> = ({ id }: Props) => {
                         <Typography>Shipping:</Typography>
                       </Grid>
                       <Grid item xs={9} style={{ flexBasis: 'auto', marginLeft: 'auto' }}>
-                        <Typography align="right">${order.shippingPrice}</Typography>
+                        <Typography align="right">${order.shippingPrice.toFixed(2)}</Typography>
                       </Grid>
                     </Grid>
                   </ListItem>
@@ -283,7 +283,7 @@ const OrderPage: NextPage<Props> = ({ id }: Props) => {
                         </Typography>
                       </Grid>
                       <Grid item xs={9} style={{ flexBasis: 'auto', marginLeft: 'auto' }}>
-                        <Typography align="right">${order.totalPrice}</Typography>
+                        <Typography align="right">${order.totalPrice.toFixed(2)}</Typography>
                       </Grid>
                     </Grid>
                   </ListItem>

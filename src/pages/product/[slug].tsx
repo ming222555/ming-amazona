@@ -131,7 +131,7 @@ const ProductPage: NextPage<Props> = ({ product }: Props) => {
                       <Typography>Price</Typography>
                     </Grid>
                     <Grid item xs={6}>
-                      <Typography>${product.price}</Typography>
+                      <Typography>${product.price.toFixed(2)}</Typography>
                     </Grid>
                   </Grid>
                 </ListItem>

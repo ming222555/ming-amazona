@@ -91,7 +91,7 @@ const OrderHistoryPage: NextPage = () => {
                         <TableRow key={order._id}>
                           <TableCell>{order._id.substring(20, 24)}</TableCell>
                           <TableCell>{moment(order.createAt).local().format('dddd, MMMM Do, YYYY h:mm A')}</TableCell>
-                          <TableCell>${order.totalPrice}</TableCell>
+                          <TableCell>${order.totalPrice.toFixed(2)}</TableCell>
                           <TableCell>
                             {order.isPaid
                               ? `paid at ${moment(order.paidAt).local().format('dddd, MMMM Do, YYYY h:mm A')}`
