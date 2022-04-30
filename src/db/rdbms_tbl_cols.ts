@@ -69,6 +69,17 @@ export interface IFOrder {
   updatedAt: number;
 }
 
+export interface IFSalesSummary {
+  ordersCount: number;
+  productsCount: number;
+  usersCount: number;
+  ordersPrice: number;
+  salesData: {
+    _id: string;
+    totalSales: number;
+  }[];
+}
+
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 interface IFOrderWithPaymentPayPalResult extends IFOrder {
   id: string;

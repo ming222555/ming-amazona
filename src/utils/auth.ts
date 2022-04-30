@@ -43,4 +43,14 @@ export const isAuth = async (req: NextApiRequest, res: NextApiResponse, next: an
   }
 };
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const isAdmin = async (req: NextApiRequest, res: NextApiResponse, next: any): Promise<void> => {
+  const status = 401;
+  if (req.body.appended_user.isAdmin) {
+    next();
+  } else {
+    res.status(status).send({ errormsg: 'User is not admin', status });
+  }
+};
+
 export { signToken };

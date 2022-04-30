@@ -104,7 +104,9 @@ const OrderHistoryPage: NextPage = () => {
                           </TableCell>
                           <TableCell>
                             <Link href={`/order/${order._id}`}>
-                              <Button variant="contained">Details</Button>
+                              <Button variant="contained" size="small">
+                                Details
+                              </Button>
                             </Link>
                           </TableCell>
                         </TableRow>

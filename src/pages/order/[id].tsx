@@ -16,6 +16,7 @@ import Snackbar from '@mui/material/Snackbar';
 import CircularProgress from '@mui/material/CircularProgress';
 import Divider from '@mui/material/Divider';
 import Skeleton from '@mui/material/Skeleton';
+import Button from '@mui/material/Button';
 
 import axios from 'axios';
 import Cookies from 'js-cookie';
@@ -36,6 +37,8 @@ const OrderPage: NextPage<Props> = ({ id }: Props) => {
   const [{ isPending }, paypalDispatch] = usePayPalScriptReducer();
   const { state } = useContext(StateContext);
   const { userInfo } = state;
+
+  const [loadingDeliver, setLoadingDeliver] = useState(false);
 
   const [alert, setAlert] = useState({
     open: false,
@@ -147,6 +150,33 @@ const OrderPage: NextPage<Props> = ({ id }: Props) => {
     });
   }
 
+  const deliverOrderHandler = async (): Promise<void> => {
+    try {
+      setLoadingDeliver(true);
+      const { data } = await axios.put<IFOrder>(
+        `/api/orders/${order?._id}/deliver`,
+        {},
+        {
+          headers: { authorization: `Bearer ${userInfo.token}` },
+        },
+      );
+      setLoadingDeliver(false);
+      setAlert({
+        open: true,
+        message: 'Order is delivered',
+        backgroundColor: '#4BB543',
+      });
+      setOrder(data);
+    } catch (err: unknown) {
+      setLoadingDeliver(false);
+      setAlert({
+        open: true,
+        message: getError(err),
+        backgroundColor: '#FF3232',
+      });
+    }
+  };
+
   return (
     <Layout title="Order">
       <Typography variant="h1">Order {id}</Typography>
@@ -167,7 +197,10 @@ const OrderPage: NextPage<Props> = ({ id }: Props) => {
                   </ListItem>
                   <ListItem>
                     <Typography component="span" style={{ fontSize: '1rem' }}>
-                      Status: {order.isDelivered ? `deilivered at ${order.deliveredAt}` : 'not delivered'}
+                      Status:{' '}
+                      {order.isDelivered
+                        ? `delivered at ${moment(order.deliveredAt).local().format('dddd, MMMM Do, YYYY h:mm A')}`
+                        : 'not delivered'}
                     </Typography>
                   </ListItem>
                 </List>
@@ -300,6 +333,19 @@ const OrderPage: NextPage<Props> = ({ id }: Props) => {
                           ></PayPalButtons>
                         </div>
                       )}
+                    </ListItem>
+                  )}
+                  {userInfo.isAdmin && order.isPaid && !order.isDelivered && (
+                    <ListItem>
+                      <Button
+                        variant="contained"
+                        color="primary"
+                        onClick={deliverOrderHandler}
+                        disabled={loadingDeliver}
+                        fullWidth
+                      >
+                        {loadingDeliver ? <CircularProgress size={30} /> : 'Deliver Order'}
+                      </Button>
                     </ListItem>
                   )}
                 </List>

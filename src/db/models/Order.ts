@@ -35,10 +35,7 @@ const orderSchema = new mongoose.Schema(
     createAt: { type: Number, required: true, default: 0 },
   },
   {
-    timestamps: {
-      createdAt: false,
-      updatedAt: true,
-    },
+    timestamps: true,
   },
 );
 

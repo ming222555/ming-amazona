@@ -207,6 +207,21 @@ export default function Header(): JSX.Element {
           >
             Order History
           </MenuItem>
+          {userInfo.token && userInfo.isAdmin ? (
+            <MenuItem
+              component={Link}
+              href="/admin/dashboard"
+              onClick={(e: React.SyntheticEvent<Element, Event>): void =>
+                loginMenuCloseHandlerWithGoto(e, '/admin/dashboard')
+              }
+              style={{
+                ...theme.typography.tab,
+              }}
+              disableRipple
+            >
+              Admin Dashboard
+            </MenuItem>
+          ) : null}
           <MenuItem
             component={Link}
             href="/"

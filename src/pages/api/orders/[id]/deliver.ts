@@ -12,22 +12,18 @@ const handler = nc<NextApiRequest, NextApiResponse>({
 });
 handler.use(isAuth);
 
-handler.get(async (req, res) => {
+handler.put(async (req, res) => {
   await db.connect();
   const order = await Order.findById(req.query.id);
   if (order) {
-    if (order.user != req.body.appended_user._id && !req.body.appended_user.isAdmin) {
-      await db.disconnect();
-      const status = 400;
-      res.status(status).send({ errormsg: 'Invalid Order id', status });
-      return;
-    }
+    order.isDelivered = true;
+    order.deliveredAt = Date.now();
+    const deliveredOrder = await order.save();
     await db.disconnect();
-    res.send(order);
+    res.send(deliveredOrder);
   } else {
     await db.disconnect();
-    const status = 404;
-    res.status(status).send({ errormsg: 'Order Id not found', status });
+    res.status(404).send({ errormsg: 'Order not found', status: 404 });
   }
 });
 
