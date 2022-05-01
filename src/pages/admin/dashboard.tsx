@@ -137,7 +137,7 @@ const AdminDashboardPage: NextPage = () => {
                     <Card raised>
                       <CardContent>
                         <Typography component="p" variant="h1">
-                          ${summary.ordersPrice}
+                          ${summary.ordersPrice.toFixed(2)}
                         </Typography>
                         <Typography>Sales</Typography>
                       </CardContent>
