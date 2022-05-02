@@ -278,7 +278,7 @@ const ProfilePage: NextPage = () => {
                 <Skeleton variant="rectangular" height="4rem" width="100%" />
               </ListItem>
               <ListItem>
-                <Button variant="contained" color="primary" fullWidth>
+                <Button variant="contained" color="primary" fullWidth disabled>
                   Update
                 </Button>
               </ListItem>
