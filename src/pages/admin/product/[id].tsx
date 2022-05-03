@@ -65,9 +65,38 @@ const ProductEditPage: NextPage<Props> = ({ id }: Props) => {
   });
 
   const [loading, setLoading] = useState(false);
+  const [loadingUpload, setLoadingUpload] = useState(false);
 
   const [product, setProduct] = useState<IFProduct | null>(null);
   const router = useRouter();
+
+  const uploadHandler = async (e: React.ChangeEvent<HTMLInputElement>): Promise<void> => {
+    const file = e.target && e.target.files && e.target.files[0];
+    const tmp: unknown = file;
+    const fileBlobString = tmp as string;
+    const bodyFormData = new FormData();
+    bodyFormData.append('file', fileBlobString);
+    try {
+      setLoadingUpload(true);
+      const { data } = await axios.post(`/api/admin/upload`, bodyFormData, {
+        headers: { 'Content-Type': 'multipart/form-data', authorization: `Bearer ${userInfo.token}` },
+      });
+      setLoadingUpload(false);
+      setValue('image', data.secure_url);
+      setAlert({
+        open: true,
+        message: 'Image is successfully uploaded',
+        backgroundColor: '#4BB543',
+      });
+    } catch (err: unknown) {
+      setLoadingUpload(false);
+      setAlert({
+        open: true,
+        message: getError(err),
+        backgroundColor: '#FF3232',
+      });
+    }
+  };
 
   const submitHandler = async ({
     name,
@@ -215,7 +244,10 @@ const ProductEditPage: NextPage<Props> = ({ id }: Props) => {
                   onSubmit={handleSubmit(submitHandler)}
                   style={{ width: '100%' }}
                 >
-                  <fieldset style={{ margin: 0, padding: 0, border: 'transparent' }} disabled={loading}>
+                  <fieldset
+                    style={{ margin: 0, padding: 0, border: 'transparent' }}
+                    disabled={loading || loadingUpload}
+                  >
                     <List>
                       <ListItem>
                         <Controller
@@ -292,6 +324,17 @@ const ProductEditPage: NextPage<Props> = ({ id }: Props) => {
                             />
                           )}
                         />
+                      </ListItem>
+                      <ListItem>
+                        <Button
+                          variant="contained"
+                          component="label"
+                          color="secondary"
+                          disabled={loading || loadingUpload}
+                        >
+                          {loadingUpload ? <CircularProgress size={30} /> : 'Upload Image'}
+                          <input type="file" onChange={uploadHandler} hidden />
+                        </Button>
                       </ListItem>
                       <ListItem>
                         <Controller
@@ -371,7 +414,13 @@ const ProductEditPage: NextPage<Props> = ({ id }: Props) => {
                         />
                       </ListItem>
                       <ListItem>
-                        <Button variant="contained" color="primary" type="submit" disabled={loading} fullWidth>
+                        <Button
+                          variant="contained"
+                          color="primary"
+                          type="submit"
+                          disabled={loading || loadingUpload}
+                          fullWidth
+                        >
                           {loading ? <CircularProgress size={30} /> : 'Update'}
                         </Button>
                       </ListItem>
