@@ -51,6 +51,8 @@ const AdminProductsPage: NextPage = () => {
 
   const [productList, setProductList] = useState<IFProduct[] | null>(null);
   const [loadingCreate, setLoadingCreate] = useState(false);
+  const [loadingDelete, setLoadingDelete] = useState(false);
+
   const router = useRouter();
 
   useEffect((): void => {
@@ -62,23 +64,24 @@ const AdminProductsPage: NextPage = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  const fetchproductList = async (): Promise<void> => {
+    try {
+      const { data } = await axios.get<IFProduct[]>('/api/admin/products', {
+        headers: { authorization: `Bearer ${userInfo.token}` },
+      });
+      setProductList(data);
+    } catch (err: unknown) {
+      setAlert({
+        open: true,
+        message: getError(err),
+        backgroundColor: '#FF3232',
+      });
+    }
+  };
+
   useEffect((): void => {
     if (userInfo.token) {
       if (userInfo.isAdmin) {
-        const fetchproductList = async (): Promise<void> => {
-          try {
-            const { data } = await axios.get<IFProduct[]>('/api/admin/products', {
-              headers: { authorization: `Bearer ${userInfo.token}` },
-            });
-            setProductList(data);
-          } catch (err: unknown) {
-            setAlert({
-              open: true,
-              message: getError(err),
-              backgroundColor: '#FF3232',
-            });
-          }
-        };
         fetchproductList();
       } else {
         router.push('/');
@@ -153,7 +156,7 @@ const AdminProductsPage: NextPage = () => {
       createdId.current = data._id;
       setAlert({
         open: true,
-        message: 'Product is successfully created',
+        message: 'Product created successfully',
         backgroundColor: '#4BB543',
       });
     } catch (err: unknown) {
@@ -165,6 +168,43 @@ const AdminProductsPage: NextPage = () => {
       });
     }
   };
+
+  const deletedProduct = useRef<true | null>(null);
+
+  const deleteHandler = async (productId: string): Promise<void> => {
+    try {
+      setLoadingDelete(true);
+      await axios.delete(`/api/admin/products/${productId}`, {
+        headers: { authorization: `Bearer ${userInfo.token}` },
+      });
+      setLoadingDelete(false);
+      deletedProduct.current = true;
+      setAlert({
+        open: true,
+        message: 'Product deleted successfully',
+        backgroundColor: '#4BB543',
+      });
+    } catch (err: unknown) {
+      setLoadingDelete(false);
+      setAlert({
+        open: true,
+        message: getError(err),
+        backgroundColor: '#FF3232',
+      });
+    }
+  };
+
+  useEffect((): void => {
+    if (deletedProduct.current) {
+      if (userInfo.token) {
+        if (userInfo.isAdmin) {
+          deletedProduct.current = null; // reset
+          fetchproductList();
+        }
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [deletedProduct.current]);
 
   return (
     <Layout title="Admin">
@@ -191,7 +231,7 @@ const AdminProductsPage: NextPage = () => {
                               variant="contained"
                               size="small"
                               color="secondary"
-                              disabled={loadingCreate}
+                              disabled={loadingCreate || loadingDelete}
                               onClick={createHandler}
                             >
                               {loadingCreate ? <CircularProgress size={30} /> : 'Create'}
@@ -212,20 +252,23 @@ const AdminProductsPage: NextPage = () => {
                               <Link
                                 href={`/admin/product/${product._id}`}
                                 onClick={(e: React.SyntheticEvent<Element, Event>): void => {
-                                  if (loadingCreate) {
+                                  if (loadingCreate || loadingDelete) {
                                     e.preventDefault();
                                   }
                                 }}
                               >
-                                <IconButton disabled={loadingCreate}>
+                                <IconButton disabled={loadingCreate || loadingDelete}>
                                   <EditIcon />
                                 </IconButton>
                               </Link>
-                              {/* <Link href={`/admin/product/${product._id}`}> */}
-                              <IconButton disabled={loadingCreate}>
+                              <IconButton
+                                disabled={loadingCreate || loadingDelete}
+                                onClick={(): void => {
+                                  deleteHandler(product._id);
+                                }}
+                              >
                                 <DeleteIcon />
                               </IconButton>
-                              {/* </Link> */}
                             </TableCell>
                           </TableRow>
                         ))}
@@ -243,7 +286,7 @@ const AdminProductsPage: NextPage = () => {
             anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
             onClose={(): void => {
               setAlert({ ...alert, open: false });
-              if (alert.message === 'Product is successfully created') {
+              if (alert.message === 'Product created successfully') {
                 router.push('/admin/product/' + createdId.current);
               }
             }}

@@ -84,7 +84,7 @@ const ProfilePage: NextPage = () => {
       setLoading(false);
       setAlert({
         open: true,
-        message: 'Profile is successfully updated',
+        message: 'Profile updated successfully',
         backgroundColor: '#4BB543',
       });
       dispatch({ type: 'USER_LOGIN', payload: data });

@@ -85,7 +85,7 @@ const ProductEditPage: NextPage<Props> = ({ id }: Props) => {
       setValue('image', data.secure_url);
       setAlert({
         open: true,
-        message: 'Image is successfully uploaded',
+        message: 'Image uploaded successfully',
         backgroundColor: '#4BB543',
       });
     } catch (err: unknown) {
@@ -121,7 +121,7 @@ const ProductEditPage: NextPage<Props> = ({ id }: Props) => {
       setLoading(false);
       setAlert({
         open: true,
-        message: 'Product is successfully updated',
+        message: 'Product updated successfully',
         backgroundColor: '#4BB543',
       });
     } catch (err: unknown) {
@@ -437,7 +437,7 @@ const ProductEditPage: NextPage<Props> = ({ id }: Props) => {
             anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
             onClose={(): void => {
               setAlert({ ...alert, open: false });
-              if (alert.message === 'Product is successfully updated') {
+              if (alert.message === 'Product updated successfully') {
                 router.push('/admin/products');
               }
             }}
