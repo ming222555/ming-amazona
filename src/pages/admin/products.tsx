@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect, useContext, useRef } from 'react';
 import type { NextPage } from 'next';
 import { useRouter } from 'next/router';
 import Typography from '@mui/material/Typography';
@@ -12,6 +12,7 @@ import TableBody from '@mui/material/TableBody';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import Snackbar from '@mui/material/Snackbar';
+import CircularProgress from '@mui/material/CircularProgress';
 import Skeleton from '@mui/material/Skeleton';
 import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
@@ -49,6 +50,7 @@ const AdminProductsPage: NextPage = () => {
   });
 
   const [productList, setProductList] = useState<IFProduct[] | null>(null);
+  const [loadingCreate, setLoadingCreate] = useState(false);
   const router = useRouter();
 
   useEffect((): void => {
@@ -135,6 +137,35 @@ const AdminProductsPage: NextPage = () => {
     </>
   );
 
+  const createdId = useRef('');
+
+  const createHandler = async (): Promise<void> => {
+    try {
+      setLoadingCreate(true);
+      const { data } = await axios.post<{ _id: string }>(
+        `/api/admin/products`,
+        {},
+        {
+          headers: { authorization: `Bearer ${userInfo.token}` },
+        },
+      );
+      setLoadingCreate(false);
+      createdId.current = data._id;
+      setAlert({
+        open: true,
+        message: 'Product is successfully created',
+        backgroundColor: '#4BB543',
+      });
+    } catch (err: unknown) {
+      setLoadingCreate(false);
+      setAlert({
+        open: true,
+        message: getError(err),
+        backgroundColor: '#FF3232',
+      });
+    }
+  };
+
   return (
     <Layout title="Admin">
       <Typography variant="h1">Admin</Typography>
@@ -155,7 +186,17 @@ const AdminProductsPage: NextPage = () => {
                           <TableCell>CATEGORY</TableCell>
                           <TableCell>COUNT</TableCell>
                           <TableCell>RATING</TableCell>
-                          <TableCell></TableCell>
+                          <TableCell>
+                            <Button
+                              variant="contained"
+                              size="small"
+                              color="secondary"
+                              disabled={loadingCreate}
+                              onClick={createHandler}
+                            >
+                              {loadingCreate ? <CircularProgress size={30} /> : 'Create'}
+                            </Button>
+                          </TableCell>
                         </TableRow>
                       </TableHead>
                       <TableBody>
@@ -168,13 +209,20 @@ const AdminProductsPage: NextPage = () => {
                             <TableCell>{product.countInStock}</TableCell>
                             <TableCell>{product.rating}</TableCell>
                             <TableCell>
-                              <Link href={`/admin/product/${product._id}`}>
-                                <IconButton>
+                              <Link
+                                href={`/admin/product/${product._id}`}
+                                onClick={(e: React.SyntheticEvent<Element, Event>): void => {
+                                  if (loadingCreate) {
+                                    e.preventDefault();
+                                  }
+                                }}
+                              >
+                                <IconButton disabled={loadingCreate}>
                                   <EditIcon />
                                 </IconButton>
                               </Link>
                               {/* <Link href={`/admin/product/${product._id}`}> */}
-                              <IconButton>
+                              <IconButton disabled={loadingCreate}>
                                 <DeleteIcon />
                               </IconButton>
                               {/* </Link> */}
@@ -193,7 +241,12 @@ const AdminProductsPage: NextPage = () => {
             message={alert.message}
             ContentProps={{ style: { backgroundColor: alert.backgroundColor } }}
             anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
-            onClose={(): void => setAlert({ ...alert, open: false })}
+            onClose={(): void => {
+              setAlert({ ...alert, open: false });
+              if (alert.message === 'Product is successfully created') {
+                router.push('/admin/product/' + createdId.current);
+              }
+            }}
             autoHideDuration={4000}
           />
         </>
