@@ -27,8 +27,18 @@ export interface IFProduct {
   numReviews: number;
   countInStock: number;
   description: string;
+  reviews?: IFProductReview[];
   createdAt: number;
   updatedAt: number;
+}
+
+export interface IFProductReview {
+  _id: string;
+  user: string /* user_id */;
+  name: string /* user name */;
+  rating: number;
+  comment: string;
+  createAt: number;
 }
 
 export interface IFCartItem extends IFProduct {

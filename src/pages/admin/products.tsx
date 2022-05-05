@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext, useRef } from 'react';
+import React, { useState, useEffect, useContext, useRef, useCallback } from 'react';
 import type { NextPage } from 'next';
 import { useRouter } from 'next/router';
 import Typography from '@mui/material/Typography';
@@ -64,7 +64,7 @@ const AdminProductsPage: NextPage = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const fetchproductList = async (): Promise<void> => {
+  const fetchproductList = useCallback(async (): Promise<void> => {
     try {
       const { data } = await axios.get<IFProduct[]>('/api/admin/products', {
         headers: { authorization: `Bearer ${userInfo.token}` },
@@ -77,7 +77,8 @@ const AdminProductsPage: NextPage = () => {
         backgroundColor: '#FF3232',
       });
     }
-  };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect((): void => {
     if (userInfo.token) {

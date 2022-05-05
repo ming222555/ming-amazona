@@ -17,5 +17,6 @@ declare module '@mui/material/styles/createPalette' {
     blue: string;
     orange: string;
     grey: string;
+    lightBlue: string;
   }
 }

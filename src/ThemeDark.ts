@@ -1,7 +1,7 @@
 import { createTheme /* , responsiveFontSizes */ } from '@mui/material/styles';
 import { red } from '@mui/material/colors';
 
-import { arcBlue, arcOrange, arcGrey } from './colors';
+import { arcBlue, arcOrange, arcGrey, lightBlue } from './colors';
 
 export default createTheme({
   palette: {
@@ -9,6 +9,7 @@ export default createTheme({
       blue: arcBlue,
       orange: arcOrange,
       grey: arcGrey,
+      lightBlue,
     },
     mode: 'dark',
     primary: {

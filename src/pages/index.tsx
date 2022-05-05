@@ -11,6 +11,7 @@ import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import Snackbar from '@mui/material/Snackbar';
 import CircularProgress from '@mui/material/CircularProgress';
+import Rating from '@mui/material/Rating';
 import { useTheme } from '@mui/material/styles';
 
 import axios from 'axios';
@@ -87,6 +88,7 @@ const Home: NextPage<Props> = ({ products }: Props) => {
                     <CardMedia component="img" image={p.image} title={p.name} />
                     <CardContent>
                       <Typography>{p.name}</Typography>
+                      <Rating value={p.rating} readOnly />
                     </CardContent>
                   </CardActionArea>
                 </Link>
@@ -125,6 +127,9 @@ export const getServerSideProps: GetServerSideProps<Props> = async () => {
   const products = (await Product.find({}).lean()) as IFProduct[];
   products.forEach(db.convertDocToObj);
   await db.disconnect();
+  products.forEach((product) => {
+    delete product.reviews;
+  });
   return {
     props: {
       products,
