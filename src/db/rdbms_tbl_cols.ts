@@ -39,6 +39,7 @@ export interface IFProductReview {
   rating: number;
   comment: string;
   createAt: number;
+  updateAt: number;
 }
 
 export interface IFCartItem extends IFProduct {

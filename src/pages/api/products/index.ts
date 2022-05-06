@@ -12,10 +12,7 @@ const handler = nc<NextApiRequest, NextApiResponse>({
 
 handler.get(async (req, res) => {
   await db.connect();
-  const products = await Product.find({});
-  products.forEach((product) => {
-    delete product.reviews;
-  });
+  const products = await Product.find({}, '-reviews');
   await db.disconnect();
   res.send(products);
 });

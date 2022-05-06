@@ -124,12 +124,9 @@ const Home: NextPage<Props> = ({ products }: Props) => {
 
 export const getServerSideProps: GetServerSideProps<Props> = async () => {
   await db.connect();
-  const products = (await Product.find({}).lean()) as IFProduct[];
+  const products = (await Product.find({}, '-reviews').lean()) as IFProduct[];
   products.forEach(db.convertDocToObj);
   await db.disconnect();
-  products.forEach((product) => {
-    delete product.reviews;
-  });
   return {
     props: {
       products,

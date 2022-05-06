@@ -17,7 +17,12 @@ handler.get(async (req, res) => {
   const product = await Product.findById(req.query.id);
   await db.disconnect();
   if (product) {
-    res.send(product.reviews);
+    res.send({
+      reviews: product.reviews.sort((a: { updateAt: number }, b: { updateAt: number }) => {
+        return a.updateAt < b.updateAt ? 1 : a.updateAt > b.updateAt ? -1 : 0;
+      }),
+      rating: product.rating,
+    });
   } else {
     res.status(404).send({ errormsg: 'Product not found', status: 404 });
   }
@@ -27,7 +32,7 @@ handler.use(isAuth).post(async (req, res) => {
   await db.connect();
   const product = await Product.findById(req.query.id);
   if (product) {
-    const existReview = product.reviews.find((x: { user: string }) => x.user === req.body.appended_user._id);
+    const existReview = product.reviews.find((x: { user: string }) => x.user == req.body.appended_user._id);
     if (existReview) {
       await Product.updateOne(
         { _id: req.query.id, 'reviews._id': existReview._id },
@@ -35,18 +40,24 @@ handler.use(isAuth).post(async (req, res) => {
           $set: {
             'reviews.$.comment': req.body.comment,
             'reviews.$.rating': Number(req.body.rating),
+            'reviews.$.updateAt': Date.now(),
           },
         },
       );
+
+      const product2 = await Product.findById(req.query.id);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      product2.rating = product2.reviews.reduce((a: any, c: any) => c.rating + a, 0) / product2.reviews.length;
+      await product2.save();
+
       await db.disconnect();
       res.send({ message: 'Review updated' });
     } else {
       const review = {
-        user: mongoose.Types.ObjectId(req.body.appended_user._id),
+        user: new mongoose.Types.ObjectId(req.body.appended_user._id),
         name: req.body.appended_user.name,
         rating: Number(req.body.rating),
         comment: req.body.comment,
-        createAt: Date.now(),
       };
       product.reviews.push(review);
       product.numReviews = product.reviews.length;

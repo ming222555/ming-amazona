@@ -20,11 +20,7 @@ async function connect(): Promise<void> {
     }
     await mongoose.disconnect();
   }
-  const db = await mongoose.connect(process.env.MONGODB_URI as string, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-    useCreateIndex: true,
-  });
+  const db = await mongoose.connect(process.env.MONGODB_URI as string, {});
   // eslint-disable-next-line no-console
   console.log('new connection');
   connection.isConnected = db.connections[0].readyState;
@@ -46,8 +42,12 @@ async function disconnect(): Promise<void> {
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function convertDocToObj(doc: any): void {
   doc._id = doc._id.toString();
-  doc.createdAt = doc.createdAt.toString();
-  doc.updatedAt = doc.updatedAt.toString();
+  if (doc.createdAt instanceof Date) {
+    doc.createdAt = doc.createdAt.toString();
+  }
+  if (doc.updatedAt instanceof Date) {
+    doc.updatedAt = doc.updatedAt.toString();
+  }
 }
 
 const db = { connect, disconnect, convertDocToObj };

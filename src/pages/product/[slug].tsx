@@ -46,6 +46,11 @@ interface Props {
   product: IFProduct;
 }
 
+interface ReviewsInfo {
+  reviews: IFProductReview[];
+  rating: number;
+}
+
 const ProductPage: NextPage<Props> = ({ product }: Props) => {
   const router = useRouter();
   const { state, dispatch } = useContext(StateContext);
@@ -59,15 +64,14 @@ const ProductPage: NextPage<Props> = ({ product }: Props) => {
 
   const [loading, setLoading] = useState(false);
   const [loadingSubmitReview, setLoadingSubmitReview] = useState(false);
-  // const [reviews, setReviews] = useState(product.reviews ? product.reviews : []);
-  const [reviews, setReviews] = useState<IFProductReview[]>([]);
-  const [rating, setRating] = useState(0);
+  const [reviewsInfo, setReviewsInfo] = useState<ReviewsInfo | null>(null);
+  const [ratingUpdate, setRatingUpdate] = useState(0);
   const [comment, setComment] = useState('');
 
   const fetchreviews = useCallback(async () => {
     try {
-      const { data } = await axios.get<IFProductReview[]>(`/api/products/${product._id}/reviews`);
-      setReviews(data);
+      const { data } = await axios.get<ReviewsInfo>(`/api/products/${product._id}/reviews`);
+      setReviewsInfo(data);
     } catch (err: unknown) {
       setAlert({
         open: true,
@@ -143,7 +147,7 @@ const ProductPage: NextPage<Props> = ({ product }: Props) => {
       const { data } = await axios.post<{ message: string }>(
         `/api/products/${product._id}/reviews`,
         {
-          rating,
+          rating: ratingUpdate,
           comment: commentTrim,
         },
         {
@@ -152,7 +156,7 @@ const ProductPage: NextPage<Props> = ({ product }: Props) => {
       );
       setLoadingSubmitReview(false);
       setComment('');
-      setRating(0);
+      setRatingUpdate(0);
       setAlert({
         open: true,
         message: 'Review submitted successfully',
@@ -198,20 +202,41 @@ const ProductPage: NextPage<Props> = ({ product }: Props) => {
               <ListItem>
                 <Typography>Brand: {product.brand}</Typography>
               </ListItem>
-              <ListItem>
-                <Rating value={product.rating} readOnly />
-                <Link
-                  color="secondary"
-                  href="#reviews"
-                  sx={{
-                    '&:hover': {
-                      textDecoration: 'underline',
-                    },
-                  }}
-                >
-                  <Typography color="secondary">({product.numReviews} reviews)</Typography>
-                </Link>
-              </ListItem>
+              {reviewsInfo ? (
+                <ListItem>
+                  <Rating value={reviewsInfo.rating} readOnly />
+                  <Link
+                    color="secondary"
+                    href="#reviews"
+                    sx={{
+                      '&:hover': {
+                        textDecoration: 'underline',
+                      },
+                    }}
+                  >
+                    <Typography color="secondary">
+                      ({reviewsInfo.reviews.length === 1 ? '1 review' : `${reviewsInfo.reviews.length} reviews`})
+                    </Typography>
+                  </Link>
+                </ListItem>
+              ) : (
+                <ListItem>
+                  <Rating value={product.rating} readOnly />
+                  <Link
+                    color="secondary"
+                    href="#reviews"
+                    sx={{
+                      '&:hover': {
+                        textDecoration: 'underline',
+                      },
+                    }}
+                  >
+                    <Typography color="secondary">
+                      ({product.numReviews === 1 ? '1 review' : `${product.numReviews} reviews`})
+                    </Typography>
+                  </Link>
+                </ListItem>
+              )}
               <ListItem>
                 <Typography>Description: {product.description}</Typography>
               </ListItem>
@@ -261,42 +286,46 @@ const ProductPage: NextPage<Props> = ({ product }: Props) => {
               Customer Reviews
             </Typography>
           </ListItem>
-          {reviews.length === 0 && <ListItem>No review</ListItem>}
-          {reviews.map((review, i) => (
-            <ListItem key={review._id}>
-              <Grid container>
-                <Grid item style={{ paddingRight: 4 }}>
-                  <Typography
-                    style={{ minWidth: '9rem', borderTop: i === 0 ? undefined : '1px solid' }}
-                    sx={{ borderColor: 'primary' }}
-                  >
-                    <strong>{review.name}</strong>
-                  </Typography>
-                  <Typography style={{ fontSize: '.9rem' }}>
-                    {moment(review.createAt).local().format('ddd, MMMM Do, YYYY')}
-                  </Typography>
+          {reviewsInfo && reviewsInfo.reviews.length === 0 && <ListItem>No review</ListItem>}
+          {reviewsInfo &&
+            reviewsInfo.reviews.map((review, i) => (
+              <ListItem key={review._id}>
+                <Grid container>
+                  <Grid item style={{ paddingRight: 4 }}>
+                    <Typography
+                      style={{ minWidth: '9rem', borderTop: i === 0 ? undefined : '1px solid' }}
+                      sx={{ borderColor: 'primary' }}
+                    >
+                      <strong>{review.name}</strong>
+                    </Typography>
+                    <Typography style={{ fontSize: '.8rem' }}>
+                      {moment(review.updateAt).local().format('ddd, MMMM Do, YYYY')}
+                    </Typography>
+                    <Typography style={{ fontSize: '.8rem' }}>
+                      {moment(review.updateAt).local().format('h:mm a')}
+                    </Typography>
+                  </Grid>
+                  <Grid item style={{ paddingLeft: 4, maxWidth: '100%' /* background: 'lightblue' */ }}>
+                    <Rating
+                      value={review.rating}
+                      readOnly
+                      style={{ borderTop: i === 0 ? undefined : '1px solid' }}
+                      sx={{ borderColor: 'primary' }}
+                    />
+                    <Typography
+                      style={{
+                        fontSize: '1rem',
+                        whiteSpace: 'pre-line',
+                        /*  background: 'yellow', */
+                        wordWrap: 'break-word',
+                      }}
+                    >
+                      {review.comment}
+                    </Typography>
+                  </Grid>
                 </Grid>
-                <Grid item style={{ paddingLeft: 4, maxWidth: '100%' /* background: 'lightblue' */ }}>
-                  <Rating
-                    value={review.rating}
-                    readOnly
-                    style={{ borderTop: i === 0 ? undefined : '1px solid' }}
-                    sx={{ borderColor: 'primary' }}
-                  />
-                  <Typography
-                    style={{
-                      fontSize: '1rem',
-                      whiteSpace: 'pre-line',
-                      /*  background: 'yellow', */
-                      wordWrap: 'break-word',
-                    }}
-                  >
-                    {review.comment}
-                  </Typography>
-                </Grid>
-              </Grid>
-            </ListItem>
-          ))}
+              </ListItem>
+            ))}
           <ListItem>
             {userInfo.token ? (
               <StyledForm onSubmit={submitHandler}>
@@ -319,9 +348,9 @@ const ProductPage: NextPage<Props> = ({ product }: Props) => {
                   <ListItem>
                     <Rating
                       name="rating"
-                      value={rating}
+                      value={ratingUpdate}
                       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                      onChange={(e: any): void => setRating(e.target.value)}
+                      onChange={(e: any): void => setRatingUpdate(parseInt(e.target.value))}
                     />
                   </ListItem>
                   <ListItem>
@@ -365,10 +394,9 @@ export const getServerSideProps: GetServerSideProps<Props> = async (context) => 
   const slug = context.params?.slug;
 
   await db.connect();
-  const product = (await Product.findOne({ slug }).lean()) as IFProduct;
+  const product = await Product.findOne({ slug }, '-reviews').lean();
   db.convertDocToObj(product);
   await db.disconnect();
-  delete product.reviews;
   return {
     props: {
       product,
