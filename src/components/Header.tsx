@@ -2,6 +2,9 @@ import React, { useContext, useRef, useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
+import IconButton from '@mui/material/IconButton';
+import MenuIcon from '@mui/icons-material/Menu';
+import SearchIcon from '@mui/icons-material/Search';
 import Typography from '@mui/material/Typography';
 import { styled, useTheme } from '@mui/material/styles';
 import Tabs from '@mui/material/Tabs';
@@ -12,26 +15,60 @@ import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
+import InputBase from '@mui/material/InputBase';
+import InputAdornment from '@mui/material/InputAdornment';
 
 import Cookies from 'js-cookie';
 
 import Link from '../components/Link';
 import StateContext from '../utils/StateContext';
 import { IFCartItem } from '../db/rdbms_tbl_cols';
+import DrawerSearch from './DrawerSearch';
 
 const PREFIX = 'Header';
 
 const StyledAppBar = styled(AppBar)(({ theme }) => ({
   [`&.${PREFIX}-navbar`]: {
+    [`& .${PREFIX}-brand`]: {
+      marginRight: 12,
+    },
     [`& .${PREFIX}-navbar__middle`]: {
       flex: '1 1 auto',
+      display: 'none',
+      [theme.breakpoints.up('md')]: {
+        display: 'block',
+      },
+    },
+    [`& .${PREFIX}-searchForm`]: {
+      margin: 'auto',
+      background: '#fff',
+      width: '70%',
+      maxWidth: 680,
+      border: '1px solid #fff',
+      borderRadius: 5,
+    },
+    [`& .${PREFIX}-searchInput`]: {
+      paddingLeft: 5,
+      color: '#000',
+      '& ::placeholder': {
+        color: '#606060',
+      },
+    },
+    [`& .${PREFIX}-searchButton`]: {
+      background: '#f8c040',
+      padding: 5,
+      borderRadius: '0 5px 5px 0',
+    },
+    [`& .${PREFIX}-darkModeSwitch`]: {
+      marginLeft: 'auto',
     },
     [`& .${PREFIX}-navbar__tab`]: {
       ...theme.typography.tab,
-      marginLeft: 10,
-      '&:first-of-type': {
-        marginLeft: 0,
-      },
+      padding: '0.5rem',
+      marginLeft: 5,
+      // '&:first-of-type': {
+      //   marginLeft: 0,
+      // },
     },
   },
 }));
@@ -110,17 +147,64 @@ export default function Header(): JSX.Element {
     }
   }, [dispatch]);
 
+  const [sidebarVisible, setSidebarVisible] = useState(false);
+  const sidebarOpenHandler = (): void => {
+    setSidebarVisible(true);
+  };
+  const sidebarCloseHandler = (): void => {
+    setSidebarVisible(false);
+  };
+
+  const [searchQuery, setSearchQuery] = useState('');
+  const searchQueryHandler = (e: React.ChangeEvent<HTMLInputElement>): void => {
+    setSearchQuery(e.target.value);
+  };
+  const submitSearchHandler = (e: React.SyntheticEvent<Element, Event>): void => {
+    e.preventDefault();
+    router.push(`/search?query=${searchQuery}`);
+  };
+
   return (
     <StyledAppBar position="static" className={`${PREFIX}-navbar`}>
       <Toolbar>
-        <Link href="/">
-          {/* todo Replace brand typo amazona with svg */}
+        <DrawerSearch open={sidebarVisible} closeHandler={sidebarCloseHandler} />
+        <IconButton
+          edge="start"
+          aria-label="open drawer"
+          disableRipple
+          sx={{ '&:hover': { background: 'transparent' } }}
+          onClick={sidebarOpenHandler}
+        >
+          <MenuIcon />
+        </IconButton>
+        <Link href="/" className={`${PREFIX}-brand`}>
           <Typography style={{ ...theme.typography.brand }}>amazona</Typography>
         </Link>
-        <div className={`${PREFIX}-navbar__middle`}>&nbsp;</div>
-        <Switch checked={darkMode} onChange={darkModeChangeHandler}></Switch>
+        <div className={`${PREFIX}-navbar__middle`}>
+          <form className={`${PREFIX}-searchForm`} onSubmit={submitSearchHandler}>
+            {/* <TextField value="33333" style={{ background: 'blue' }} fullWidth /> */}
+            <InputBase
+              name="query"
+              className={`${PREFIX}-searchInput`}
+              placeholder="Search Products"
+              onChange={searchQueryHandler}
+              endAdornment={
+                <InputAdornment position="end">
+                  <IconButton type="submit" aria-label="search" className={`${PREFIX}-searchButton`}>
+                    <SearchIcon />
+                  </IconButton>
+                </InputAdornment>
+              }
+              fullWidth
+            />
+          </form>
+        </div>
+        <Switch checked={darkMode} onChange={darkModeChangeHandler} className={`${PREFIX}-darkModeSwitch`}></Switch>
         {/* indicatorColor overriden to transparent at Theme.ts */}
-        <Tabs value={0} /* value={value} onChange={handleChange} indicatorColor="secondary" */>
+        <Tabs
+          value={0}
+          /* value={value} onChange={handleChange} indicatorColor="secondary" */
+        >
           <Tab
             component={Link}
             href="/cart"

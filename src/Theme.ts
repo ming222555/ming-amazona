@@ -1,7 +1,7 @@
 import { createTheme /* , responsiveFontSizes */ } from '@mui/material/styles';
 import { red } from '@mui/material/colors';
 
-import { arcBlue, arcOrange, arcGrey, lightBlue } from './colors';
+import { arcBlue, arcOrange, arcGrey, lightBlue, lighterBlue } from './colors';
 
 export default createTheme({
   palette: {
@@ -10,6 +10,7 @@ export default createTheme({
       orange: arcOrange,
       grey: arcGrey,
       lightBlue,
+      lighterBlue,
     },
     mode: 'light',
     primary: {
@@ -100,6 +101,15 @@ export default createTheme({
       styleOverrides: {
         indicator: {
           background: 'transparent',
+        },
+      },
+    },
+    MuiListItem: {
+      styleOverrides: {
+        root: {
+          '&:hover': {
+            background: lighterBlue,
+          },
         },
       },
     },
