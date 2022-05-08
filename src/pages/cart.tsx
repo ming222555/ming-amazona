@@ -23,7 +23,7 @@ import Snackbar from '@mui/material/Snackbar';
 import axios from 'axios';
 
 import StateContext from '../utils/StateContext';
-import Link from '../components/Link';
+import Link from '../components/shared/Link';
 import Layout from '../components/Layout';
 import { IFProduct, IFCartItem } from '../db/rdbms_tbl_cols';
 import { getError } from '../utils/error/frontend/error';

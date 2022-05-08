@@ -104,15 +104,15 @@ export default createTheme({
         },
       },
     },
-    MuiListItem: {
-      styleOverrides: {
-        root: {
-          '&:hover': {
-            background: lighterBlue,
-          },
-        },
-      },
-    },
+    // MuiListItem: {
+    //   styleOverrides: {
+    //     root: {
+    //       '&:hover': {
+    //         background: lighterBlue,
+    //       },
+    //     },
+    //   },
+    // },
   },
 });
 /* 

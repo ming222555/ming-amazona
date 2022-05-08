@@ -10,11 +10,13 @@ import Divider from '@mui/material/Divider';
 import Typography from '@mui/material/Typography';
 import Snackbar from '@mui/material/Snackbar';
 import { useTheme } from '@mui/material/styles';
+import { useRouter } from 'next/router';
 
 import axios from 'axios';
 
-import Link from '../components/Link';
+import Link from '../components/shared/Link';
 import { getError } from '../utils/error/frontend/error';
+import { lighterBlue } from '../colors';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export default function DrawerSearch(props: { open: boolean; closeHandler: () => void }): JSX.Element {
@@ -46,12 +48,19 @@ export default function DrawerSearch(props: { open: boolean; closeHandler: () =>
   }, []);
 
   const theme = useTheme();
+  const router = useRouter();
 
   return (
     <>
       <Drawer anchor="left" open={props.open} onClose={props.closeHandler}>
-        <List>
-          <ListItem sx={{ '&:hover': { background: 'transparent' } }}>
+        <List
+          sx={{
+            '& > .MuiListItem-root:hover': {
+              background: lighterBlue,
+            },
+          }}
+        >
+          <ListItem style={{ background: 'transparent' }}>
             <Box display="flex" alignItems="center" justifyContent="space-between">
               <Typography>Shopping by category</Typography>
               <IconButton
@@ -64,19 +73,33 @@ export default function DrawerSearch(props: { open: boolean; closeHandler: () =>
             </Box>
           </ListItem>
           <Divider light />
-          {categories.map((category) => (
-            <ListItem key={category}>
+          {router.pathname !== '/search' && categories.length > 0 ? (
+            <ListItem>
               <ListItemText>
                 <Link
-                  href={`/search?category=${category}`}
+                  href="/search?category=all"
                   style={{ display: 'flex' }}
                   color={theme.palette.mode === 'light' ? 'primary' : 'secondary'}
                 >
-                  {category}
+                  All
                 </Link>
               </ListItemText>
             </ListItem>
-          ))}
+          ) : null}
+          {router.pathname !== '/search' &&
+            categories.map((category) => (
+              <ListItem key={category}>
+                <ListItemText>
+                  <Link
+                    href={`/search?category=${category}`}
+                    style={{ display: 'flex' }}
+                    color={theme.palette.mode === 'light' ? 'primary' : 'secondary'}
+                  >
+                    {category}
+                  </Link>
+                </ListItemText>
+              </ListItem>
+            ))}
         </List>
       </Drawer>
       <Snackbar

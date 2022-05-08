@@ -1,6 +1,5 @@
 import React, { useContext, useState, useEffect, useCallback } from 'react';
 import type { NextPage, GetServerSideProps } from 'next';
-import { useRouter } from 'next/router';
 import Image from 'next/image';
 import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
@@ -18,12 +17,13 @@ import { styled } from '@mui/material/styles';
 import axios from 'axios';
 import moment from 'moment';
 
-import Link from '../../components/Link';
+import Link from '../../components/shared/Link';
 import Layout from '../../components/Layout';
 import db from '../../db/db';
 import Product from '../../db/models/Product';
 import { IFProduct, IFProductReview } from '../../db/rdbms_tbl_cols';
 import StateContext from '../../utils/StateContext';
+import useAddToCartHandler from '../../hooks/shared/useAddToCartHandler';
 import { getError } from '../../utils/error/frontend/error';
 
 const StyledTopSection = styled('section')({
@@ -52,8 +52,7 @@ interface ReviewsInfo {
 }
 
 const ProductPage: NextPage<Props> = ({ product }: Props) => {
-  const router = useRouter();
-  const { state, dispatch } = useContext(StateContext);
+  const { state } = useContext(StateContext);
   const { userInfo } = state;
 
   const [alert, setAlert] = useState({
@@ -62,7 +61,6 @@ const ProductPage: NextPage<Props> = ({ product }: Props) => {
     backgroundColor: '',
   });
 
-  const [loading, setLoading] = useState(false);
   const [loadingSubmitReview, setLoadingSubmitReview] = useState(false);
   const [reviewsInfo, setReviewsInfo] = useState<ReviewsInfo | null>(null);
   const [ratingUpdate, setRatingUpdate] = useState(0);
@@ -87,44 +85,11 @@ const ProductPage: NextPage<Props> = ({ product }: Props) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  const { loadingAddToCart, alertAddToCart, setAlertAddToCart, addToCartHandler } = useAddToCartHandler();
+
   if (!product) {
     return <div>Product Not Found</div>;
   }
-
-  const addToCartHandler = async (): Promise<void> => {
-    try {
-      setLoading(true);
-      const res = await axios.get<IFProduct>(`/api/products/${product._id}`);
-      const { data } = res;
-      const existCartItem = state.cart.cartItems.find((item) => item._id === product._id);
-      if (existCartItem) {
-        const quantity = existCartItem.quantity + 1;
-        if (data.countInStock < quantity) {
-          setLoading(false);
-          setAlert({
-            open: true,
-            message: 'Sorry. Product is out of stock',
-            backgroundColor: '#FF3232',
-          });
-          return;
-        }
-        dispatch({ type: 'CART_ADD_ITEM', payload: { ...existCartItem, quantity } });
-        router.push('/cart');
-        return;
-      }
-      dispatch({ type: 'CART_ADD_ITEM', payload: { ...product, quantity: 1 } });
-      router.push('/cart');
-      // Catch clause variable type annotation must be 'any' or 'unknown' if specified.ts(1196)
-      // https://stackoverflow.com/questions/69021040/why-catch-clause-variable-type-annotation-must-be-any
-    } catch (err: unknown) {
-      setLoading(false);
-      setAlert({
-        open: true,
-        message: getError(err),
-        backgroundColor: '#FF3232',
-      });
-    }
-  };
 
   const submitHandler = async (e: React.SyntheticEvent<Element, Event>): Promise<void> => {
     e.preventDefault();
@@ -269,11 +234,13 @@ const ProductPage: NextPage<Props> = ({ product }: Props) => {
                   <Button
                     variant="contained"
                     color="secondary"
-                    onClick={addToCartHandler}
-                    disabled={loading || loadingSubmitReview}
+                    onClick={(): void => {
+                      addToCartHandler(product);
+                    }}
+                    disabled={loadingAddToCart || loadingSubmitReview}
                     fullWidth
                   >
-                    {loading ? <CircularProgress size={30} /> : 'Add to cart'}
+                    {loadingAddToCart ? <CircularProgress size={30} /> : 'Add to cart'}
                   </Button>
                 </ListItem>
               </List>
@@ -358,7 +325,7 @@ const ProductPage: NextPage<Props> = ({ product }: Props) => {
                       type="submit"
                       variant="contained"
                       color="primary"
-                      disabled={loading || loadingSubmitReview}
+                      disabled={loadingAddToCart || loadingSubmitReview}
                       fullWidth
                     >
                       {loadingSubmitReview ? <CircularProgress size={30} /> : 'Submit'}
@@ -377,6 +344,14 @@ const ProductPage: NextPage<Props> = ({ product }: Props) => {
             )}
           </ListItem>
         </List>
+        <Snackbar
+          open={alertAddToCart.open}
+          message={alertAddToCart.message}
+          ContentProps={{ style: { backgroundColor: alertAddToCart.backgroundColor } }}
+          anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+          onClose={(): void => setAlertAddToCart({ ...alertAddToCart, open: false })}
+          autoHideDuration={4000}
+        />
         <Snackbar
           open={alert.open}
           message={alert.message}

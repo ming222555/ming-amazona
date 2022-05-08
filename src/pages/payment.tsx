@@ -34,7 +34,7 @@ import Cookies from 'js-cookie';
 import { useForm } from 'react-hook-form';
 
 import Layout from '../components/Layout';
-import Link from '../components/Link';
+import Link from '../components/shared/Link';
 import { IFOrder } from '../db/rdbms_tbl_cols';
 import StateContext from '../utils/StateContext';
 import { getError } from '../utils/error/frontend/error';

@@ -21,7 +21,7 @@ import { Controller, useForm } from 'react-hook-form';
 import Layout from '../../../components/Layout';
 import { IFUser } from '../../../db/rdbms_tbl_cols';
 import StateContext from '../../../utils/StateContext';
-import Link from '../../../components/Link';
+import Link from '../../../components/shared/Link';
 import { getError } from '../../../utils/error/frontend/error';
 
 const PREFIX = 'UserEditPage';

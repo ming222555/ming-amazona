@@ -20,7 +20,7 @@ import InputAdornment from '@mui/material/InputAdornment';
 
 import Cookies from 'js-cookie';
 
-import Link from '../components/Link';
+import Link from '../components/shared/Link';
 import StateContext from '../utils/StateContext';
 import { IFCartItem } from '../db/rdbms_tbl_cols';
 import DrawerSearch from './DrawerSearch';
@@ -182,7 +182,6 @@ export default function Header(): JSX.Element {
         </Link>
         <div className={`${PREFIX}-navbar__middle`}>
           <form className={`${PREFIX}-searchForm`} onSubmit={submitSearchHandler}>
-            {/* <TextField value="33333" style={{ background: 'blue' }} fullWidth /> */}
             <InputBase
               name="query"
               className={`${PREFIX}-searchInput`}

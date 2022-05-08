@@ -20,7 +20,7 @@ import { Bar } from 'react-chartjs-2';
 import Layout from '../../components/Layout';
 import { IFSalesSummary } from '../../db/rdbms_tbl_cols';
 import StateContext from '../../utils/StateContext';
-import Link from '../../components/Link';
+import Link from '../../components/shared/Link';
 import { getError } from '../../utils/error/frontend/error';
 
 const PREFIX = 'AdminDashboardPage';

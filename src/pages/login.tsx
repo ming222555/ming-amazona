@@ -14,7 +14,7 @@ import axios from 'axios';
 import { Controller, useForm } from 'react-hook-form';
 
 import Layout from '../components/Layout';
-import Link from '../components/Link';
+import Link from '../components/shared/Link';
 import { IFTokenUser } from '../pages/api/users/login';
 import StateContext from '../utils/StateContext';
 import { getError } from '../utils/error/frontend/error';
