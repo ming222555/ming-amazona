@@ -161,7 +161,7 @@ export default function Header(): JSX.Element {
   };
   const submitSearchHandler = (e: React.SyntheticEvent<Element, Event>): void => {
     e.preventDefault();
-    router.push(`/search?query=${searchQuery}`);
+    router.push(`/search?query=${searchQuery.trim()}`);
   };
 
   return (

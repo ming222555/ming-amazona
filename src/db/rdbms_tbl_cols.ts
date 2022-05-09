@@ -19,7 +19,7 @@ export interface IFProduct {
   slug: string;
   category: string;
   image: string;
-  isFeatured: boolean;
+  isFeatured: number;
   featuredImage: string;
   price: number;
   brand: string;
