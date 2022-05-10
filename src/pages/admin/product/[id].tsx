@@ -292,7 +292,16 @@ const ProductEditPage: NextPage<Props> = ({ id }: Props) => {
                           name="price"
                           control={control}
                           defaultValue={0}
-                          rules={{ required: true }}
+                          rules={{
+                            required: {
+                              value: true,
+                              message: 'Price is required',
+                            },
+                            pattern: {
+                              value: /^[0-9]+(.[0-9]{1,2})?$/,
+                              message: 'Price must be numeric (at most 2 dp)',
+                            },
+                          }}
                           render={({ field }): JSX.Element => (
                             <TextField
                               variant="outlined"
@@ -300,7 +309,7 @@ const ProductEditPage: NextPage<Props> = ({ id }: Props) => {
                               id="price"
                               label="Price"
                               error={Boolean(errors.price)}
-                              helperText={errors.price ? 'Price is required' : ''}
+                              helperText={errors.price?.message}
                               {...field}
                             />
                           )}
@@ -379,7 +388,16 @@ const ProductEditPage: NextPage<Props> = ({ id }: Props) => {
                           name="countInStock"
                           control={control}
                           defaultValue={0}
-                          rules={{ required: true }}
+                          rules={{
+                            required: {
+                              value: true,
+                              message: 'Count in stock is required',
+                            },
+                            pattern: {
+                              value: new RegExp('^(100000|\\d{1,5})$'),
+                              message: 'Count in stock must be integer (0 or more) of maximum 100000',
+                            },
+                          }}
                           render={({ field }): JSX.Element => (
                             <TextField
                               variant="outlined"
@@ -387,7 +405,7 @@ const ProductEditPage: NextPage<Props> = ({ id }: Props) => {
                               id="countInStock"
                               label="Count in stock"
                               error={Boolean(errors.countInStock)}
-                              helperText={errors.countInStock ? 'Count in stock is required' : ''}
+                              helperText={errors.countInStock?.message}
                               {...field}
                             />
                           )}
