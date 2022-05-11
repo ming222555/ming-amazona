@@ -15,11 +15,9 @@ handler.use(isAuth);
 
 handler.post(async (req, res) => {
   await db.connect();
-  const createAt = Date.now();
   const newOrder = new Order({
     ...req.body,
     user: req.body.appended_user._id,
-    createAt,
   });
   const order = await newOrder.save();
   await db.disconnect();

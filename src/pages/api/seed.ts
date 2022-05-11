@@ -2,6 +2,7 @@ import { NextApiRequest, NextApiResponse } from 'next';
 import nc from 'next-connect';
 import Product from '../../db/models/Product';
 import User from '../../db/models/User';
+import Order from '../../db/models/Order';
 import db from '../../db/db';
 import data from '../../db/seeddata';
 import { onError, onNoMatch } from '../../utils/error/backend/error';
@@ -18,6 +19,7 @@ handler.get(async (req, res) => {
   await User.insertMany(data.users);
   await Product.deleteMany();
   await Product.insertMany(data.products);
+  await Order.deleteMany();
   await db.disconnect();
   const status = 201;
   res.status(status).send({ message: 'seeded successfully', status });

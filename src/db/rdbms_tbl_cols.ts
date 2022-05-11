@@ -77,7 +77,7 @@ export interface IFOrder {
   paidAt: number;
   deliveredAt: number;
   createAt: number;
-  updatedAt: number;
+  updateAt: number;
 }
 
 export interface IFSalesSummary {

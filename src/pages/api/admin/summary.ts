@@ -32,7 +32,8 @@ handler.get(async (req, res) => {
   const salesData = await Order.aggregate([
     {
       $group: {
-        _id: { $dateToString: { format: '%Y-%m', date: '$createdAt' } },
+        _id: { $dateToString: { format: '%Y-%m', date: { $toDate: '$createAt' } } }, // by month
+        // _id: { $dateToString: { format: '%Y-%M', date: { $toDate: '$createAt' } } }, // by Minute
         totalSales: { $sum: '$totalPrice' },
       },
     },

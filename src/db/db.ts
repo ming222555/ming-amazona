@@ -43,10 +43,11 @@ async function disconnect(): Promise<void> {
 function convertDocToObj(doc: any): void {
   doc._id = doc._id.toString();
   if (doc.createdAt instanceof Date) {
-    doc.createdAt = doc.createdAt.toString();
+    // number of milliseconds since epoch
+    doc.createdAt = doc.createdAt.getTime();
   }
   if (doc.updatedAt instanceof Date) {
-    doc.updatedAt = doc.updatedAt.toString();
+    doc.updatedAt = doc.updatedAt.getTime();
   }
 }
 
