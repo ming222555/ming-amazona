@@ -75,6 +75,8 @@ const SearchPage: NextPage<Props> = ({ products, countProducts, categories, bran
     if (price) query.price = price;
     if (rating) query.rating = rating;
 
+    if (!page) query.page = '1';
+
     router.push({
       pathname: path,
       query: query,
@@ -259,6 +261,7 @@ const SearchPage: NextPage<Props> = ({ products, countProducts, categories, bran
             defaultPage={parseInt((router.query.page || '1') as string)}
             count={pages}
             onChange={pageHandler}
+            style={{ display: products.length > 0 ? 'block' : 'none' }}
           />
         </Grid>
       </Grid>

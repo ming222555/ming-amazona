@@ -5,6 +5,8 @@ import Toolbar from '@mui/material/Toolbar';
 import IconButton from '@mui/material/IconButton';
 import MenuIcon from '@mui/icons-material/Menu';
 import SearchIcon from '@mui/icons-material/Search';
+import CartIcon from '@mui/icons-material/ShoppingCartOutlined';
+import UserIcon from '@mui/icons-material/PersonOutlineOutlined';
 import Typography from '@mui/material/Typography';
 import { styled, useTheme } from '@mui/material/styles';
 import Tabs from '@mui/material/Tabs';
@@ -61,6 +63,26 @@ const StyledAppBar = styled(AppBar)(({ theme }) => ({
     },
     [`& .${PREFIX}-darkModeSwitch`]: {
       marginLeft: 'auto',
+    },
+    [`& .${PREFIX}-cartBadge`]: {
+      color: '#fff',
+      background: '#000',
+      marginTop: 5,
+      marginRight: 5,
+    },
+    [`& .${PREFIX}-username, & .${PREFIX}-username-KeyboardArrow`]: {
+      display: 'none',
+      [theme.breakpoints.up('sm')]: {
+        display: 'block',
+      },
+    },
+    [`& .${PREFIX}-usericon`]: {
+      display: 'block',
+      marginLeft: '-3.5rem',
+      marginTop: 3,
+      [theme.breakpoints.up('sm')]: {
+        display: 'none',
+      },
     },
     [`& .${PREFIX}-navbar__tab`]: {
       ...theme.typography.tab,
@@ -168,14 +190,8 @@ export default function Header(): JSX.Element {
     <StyledAppBar position="static" className={`${PREFIX}-navbar`}>
       <Toolbar>
         <DrawerSearch open={sidebarVisible} closeHandler={sidebarCloseHandler} />
-        <IconButton
-          edge="start"
-          aria-label="open drawer"
-          disableRipple
-          sx={{ '&:hover': { background: 'transparent' } }}
-          onClick={sidebarOpenHandler}
-        >
-          <MenuIcon />
+        <IconButton edge="start" aria-label="open drawer" disableRipple onClick={sidebarOpenHandler}>
+          <MenuIcon htmlColor="#fff" />
         </IconButton>
         <Link href="/" className={`${PREFIX}-brand`}>
           <Typography style={{ ...theme.typography.brand }}>amazona</Typography>
@@ -208,8 +224,14 @@ export default function Header(): JSX.Element {
             component={Link}
             href="/cart"
             label={
-              <Badge badgeContent={cart.cartItems.reduce(getCartQuantity, 0)} color="secondary">
-                Cart
+              <Badge
+                badgeContent={cart.cartItems.reduce(getCartQuantity, 0)}
+                color="secondary"
+                classes={{ badge: `${PREFIX}-cartBadge` }}
+              >
+                <IconButton aria-label="cart">
+                  <CartIcon htmlColor="#fff" style={{ fontSize: '1.8rem' }} />
+                </IconButton>
               </Badge>
             }
             className={`${PREFIX}-navbar__tab`}
@@ -220,9 +242,17 @@ export default function Header(): JSX.Element {
             href={token ? '#' : '/login'}
             label={
               token ? (
-                <span style={{ maxWidth: '10rem', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                  {name}
-                </span>
+                <>
+                  <span
+                    style={{ maxWidth: '10rem', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}
+                    className={`${PREFIX}-username`}
+                  >
+                    {name}
+                  </span>
+                  <IconButton disableRipple aria-label="user" className={`${PREFIX}-usericon`}>
+                    <UserIcon htmlColor="#fff" style={{ fontSize: '2rem' }} />
+                  </IconButton>
+                </>
               ) : (
                 'Login'
               )
@@ -232,9 +262,9 @@ export default function Header(): JSX.Element {
             iconPosition={token ? 'end' : undefined}
             icon={
               !token ? undefined : anchorEl ? (
-                <KeyboardArrowUpIcon style={{ margin: 0 }} />
+                <KeyboardArrowUpIcon style={{ margin: 0 }} className={`${PREFIX}-username-KeyboardArrow`} />
               ) : (
-                <KeyboardArrowDownIcon style={{ margin: 0 }} />
+                <KeyboardArrowDownIcon style={{ margin: 0 }} className={`${PREFIX}-username-KeyboardArrow`} />
               )
             }
             onClick={
@@ -266,6 +296,26 @@ export default function Header(): JSX.Element {
           // }}
           keepMounted
         >
+          <MenuItem
+            disableRipple
+            sx={{ display: { xs: 'flex', sm: 'none' }, '&:hover': { background: 'transparent' } }}
+            style={{ cursor: 'default' }}
+          >
+            <Typography
+              component="span"
+              style={{
+                maxWidth: '10rem',
+                whiteSpace: 'nowrap',
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+                fontSize: '1rem',
+                borderBottom: '1px solid #fff',
+              }}
+              color="secondary"
+            >
+              Hi, {name}
+            </Typography>
+          </MenuItem>
           <MenuItem
             component={Link}
             href="/profile"
