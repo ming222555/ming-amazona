@@ -17,10 +17,11 @@ handler.use(isAuth, isAdmin);
 
 handler.get(async (req, res) => {
   await db.connect();
-  const ordersCount = await Order.countDocuments();
+  const ordersCount = await Order.countDocuments({ isPaid: false });
   const productsCount = await Product.countDocuments();
   const usersCount = await User.countDocuments();
   const ordersPriceGroup = await Order.aggregate([
+    { $match: { isPaid: true } },
     {
       $group: {
         _id: null,
@@ -30,6 +31,7 @@ handler.get(async (req, res) => {
   ]);
   const ordersPrice = ordersPriceGroup.length > 0 ? ordersPriceGroup[0].sales : 0;
   const salesData = await Order.aggregate([
+    { $match: { isPaid: true } },
     {
       $group: {
         _id: { $dateToString: { format: '%Y-%m', date: { $toDate: '$createAt' } } }, // by month

@@ -67,7 +67,8 @@ const AdminOrdersPage: NextPage = () => {
       if (userInfo.isAdmin) {
         const fetchorderList = async (): Promise<void> => {
           try {
-            const { data } = await axios.get<IFOrder[]>('/api/admin/orders', {
+            const isQuerySales = router.query.hasOwnProperty('sales');
+            const { data } = await axios.get<IFOrder[]>(`/api/admin/orders${isQuerySales ? '?sales' : ''}`, {
               headers: { authorization: `Bearer ${userInfo.token}` },
             });
             setOrderList(data);

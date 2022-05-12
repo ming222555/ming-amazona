@@ -14,8 +14,9 @@ const handler = nc<NextApiRequest, NextApiResponse>({
 handler.use(isAuth, isAdmin);
 
 handler.get(async (req, res) => {
+  const isPaid = req.query.hasOwnProperty('sales');
   await db.connect();
-  const orders = await Order.find({}).populate('user', 'name');
+  const orders = await Order.find({ isPaid }).populate('user', 'name');
   await db.disconnect();
   res.send(orders);
 });

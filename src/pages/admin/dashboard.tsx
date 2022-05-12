@@ -142,7 +142,7 @@ const AdminDashboardPage: NextPage = () => {
                         <Typography>Sales</Typography>
                       </CardContent>
                       <CardActions>
-                        <Link href="/admin/orders">
+                        <Link href="/admin/orders?sales">
                           <Button size="small" color="secondary">
                             View Sales
                           </Button>
