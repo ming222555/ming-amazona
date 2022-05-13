@@ -6,6 +6,7 @@ import IconButton from '@mui/material/IconButton';
 import MenuIcon from '@mui/icons-material/Menu';
 import SearchIcon from '@mui/icons-material/Search';
 import CartIcon from '@mui/icons-material/ShoppingCartOutlined';
+import LoginIcon from '@mui/icons-material/Login';
 import UserIcon from '@mui/icons-material/PersonOutlineOutlined';
 import Typography from '@mui/material/Typography';
 import { styled, useTheme } from '@mui/material/styles';
@@ -70,13 +71,7 @@ const StyledAppBar = styled(AppBar)(({ theme }) => ({
       marginTop: 5,
       marginRight: 5,
     },
-    [`& .${PREFIX}-username, & .${PREFIX}-username-KeyboardArrow`]: {
-      display: 'none',
-      [theme.breakpoints.up('sm')]: {
-        display: 'block',
-      },
-    },
-    [`& .${PREFIX}-usericon`]: {
+    [`& .${PREFIX}-loginicon, & .${PREFIX}-usericon`]: {
       display: 'block',
       marginLeft: '-3.5rem',
       [theme.breakpoints.up(540)]: {
@@ -84,6 +79,12 @@ const StyledAppBar = styled(AppBar)(({ theme }) => ({
       },
       [theme.breakpoints.up('sm')]: {
         display: 'none',
+      },
+    },
+    [`& .${PREFIX}-login, & .${PREFIX}-username, & .${PREFIX}-username-KeyboardArrow`]: {
+      display: 'none',
+      [theme.breakpoints.up('sm')]: {
+        display: 'block',
       },
     },
     [`& .${PREFIX}-navbar__tab`]: {
@@ -246,20 +247,25 @@ export default function Header(): JSX.Element {
             component={Link}
             href={token ? '#' : '/login'}
             label={
-              token ? (
+              !token ? (
                 <>
+                  <IconButton disableRipple aria-label="login" className={`${PREFIX}-loginicon`}>
+                    <LoginIcon htmlColor="#fff" style={{ fontSize: '2rem' }} />
+                  </IconButton>
+                  <span className={`${PREFIX}-login`}>Login</span>
+                </>
+              ) : (
+                <>
+                  <IconButton disableRipple aria-label="user" className={`${PREFIX}-usericon`}>
+                    <UserIcon htmlColor="#fff" style={{ fontSize: '2rem' }} />
+                  </IconButton>
                   <span
                     style={{ maxWidth: '10rem', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}
                     className={`${PREFIX}-username`}
                   >
                     {name}
                   </span>
-                  <IconButton disableRipple aria-label="user" className={`${PREFIX}-usericon`}>
-                    <UserIcon htmlColor="#fff" style={{ fontSize: '2rem' }} />
-                  </IconButton>
                 </>
-              ) : (
-                'Login'
               )
             }
             aria-owns={token ? 'username-menu' : undefined}
