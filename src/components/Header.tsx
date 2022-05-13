@@ -79,7 +79,9 @@ const StyledAppBar = styled(AppBar)(({ theme }) => ({
     [`& .${PREFIX}-usericon`]: {
       display: 'block',
       marginLeft: '-3.5rem',
-      marginTop: 3,
+      [theme.breakpoints.up(540)]: {
+        marginLeft: 0,
+      },
       [theme.breakpoints.up('sm')]: {
         display: 'none',
       },
@@ -104,6 +106,9 @@ const StyledMenu = styled(Menu)(({ theme }) => ({
     borderRadius: 0,
     borderWidth: 0,
     marginTop: 4,
+    '@media screen and (orientation:landscape) and (hover: none)': {
+      marginTop: '1.5rem',
+    },
   },
 }));
 
