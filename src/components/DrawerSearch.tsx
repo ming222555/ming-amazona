@@ -43,7 +43,17 @@ export default function DrawerSearch(props: { open: boolean; closeHandler: () =>
   }, []);
 
   useEffect(() => {
-    fetchCategoryList();
+    // fetchCategoryList();
+    /*
+     * seems a delay timeout is needed when ...
+     * 1. production environment AND
+     * 2. two api calls are made about same time, with each leading to "import db from '.../db/db'" at backend,
+     *    as in axios `/api/users/profile`
+     *    and axios '/api/products/categories'.
+     *
+     * Without delay timeout, a runtime backend hits error on mongo connection / disconnection.
+     */
+    setTimeout(() => fetchCategoryList(), 1000);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
