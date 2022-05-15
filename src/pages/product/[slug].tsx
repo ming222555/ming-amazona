@@ -180,7 +180,7 @@ const ProductPage: NextPage<Props> = ({ product }: Props) => {
                     }}
                   >
                     <Typography color="secondary">
-                      ({reviewsInfo.reviews.length === 1 ? '1 review' : `${reviewsInfo.reviews.length} reviews`})
+                      ({reviewsInfo.reviews.length}&nbsp;{reviewsInfo.reviews.length === 1 ? 'review' : 'reviews'})
                     </Typography>
                   </Link>
                 </ListItem>
@@ -197,13 +197,14 @@ const ProductPage: NextPage<Props> = ({ product }: Props) => {
                     }}
                   >
                     <Typography color="secondary">
-                      ({product.numReviews === 1 ? '1 review' : `${product.numReviews} reviews`})
+                      ({product.numReviews}&nbsp;{product.numReviews === 1 ? 'review' : 'reviews'})
                     </Typography>
                   </Link>
                 </ListItem>
               )}
-              <ListItem>
-                <Typography>Description: {product.description}</Typography>
+              <ListItem style={{ flexDirection: 'column', alignItems: 'flex-start' }}>
+                <Typography>Description:</Typography>
+                <Typography>{product.description}</Typography>
               </ListItem>
             </List>
           </Grid>
