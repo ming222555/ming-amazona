@@ -10,6 +10,8 @@ import Snackbar from '@mui/material/Snackbar';
 import CircularProgress from '@mui/material/CircularProgress';
 import Skeleton from '@mui/material/Skeleton';
 import Button from '@mui/material/Button';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import CheckBox from '@mui/material/CheckBox';
 import { styled } from '@mui/material/styles';
 
 import axios from 'axios';
@@ -36,6 +38,7 @@ interface IFFormData {
   slug: string;
   price: number;
   image: string;
+  featuredImage: string;
   category: string;
   brand: string;
   countInStock: number;
@@ -66,30 +69,36 @@ const ProductEditPage: NextPage<Props> = ({ id }: Props) => {
 
   const [loading, setLoading] = useState(false);
   const [loadingUpload, setLoadingUpload] = useState(false);
+  const [loadingUploadFeatured, setLoadingUploadFeatured] = useState(false);
 
   const [product, setProduct] = useState<IFProduct | null>(null);
   const router = useRouter();
 
-  const uploadHandler = async (e: React.ChangeEvent<HTMLInputElement>): Promise<void> => {
+  const [isFeatured, setIsFeatured] = useState(0);
+
+  const uploadHandler = async (
+    e: React.ChangeEvent<HTMLInputElement>,
+    imageField: 'image' | 'featuredImage',
+  ): Promise<void> => {
     const file = e.target && e.target.files && e.target.files[0];
     const tmp: unknown = file;
     const fileBlobString = tmp as string;
     const bodyFormData = new FormData();
     bodyFormData.append('file', fileBlobString);
     try {
-      setLoadingUpload(true);
+      imageField === 'image' ? setLoadingUpload(true) : setLoadingUploadFeatured(true);
       const { data } = await axios.post(`/api/admin/upload`, bodyFormData, {
         headers: { 'Content-Type': 'multipart/form-data', authorization: `Bearer ${userInfo.token}` },
       });
-      setLoadingUpload(false);
-      setValue('image', data.secure_url);
+      imageField === 'image' ? setLoadingUpload(false) : setLoadingUploadFeatured(false);
+      setValue(imageField, data.secure_url);
       setAlert({
         open: true,
         message: 'Image uploaded successfully',
         backgroundColor: '#4BB543',
       });
     } catch (err: unknown) {
-      setLoadingUpload(false);
+      imageField === 'image' ? setLoadingUpload(false) : setLoadingUploadFeatured(false);
       setAlert({
         open: true,
         message: getError(err),
@@ -103,6 +112,7 @@ const ProductEditPage: NextPage<Props> = ({ id }: Props) => {
     slug,
     price,
     image,
+    featuredImage,
     category,
     brand,
     countInStock,
@@ -113,7 +123,7 @@ const ProductEditPage: NextPage<Props> = ({ id }: Props) => {
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { data } = await axios.put<{ message: string }>(
         `/api/admin/products/${id}`,
-        { ...product, name, slug, price, image, category, brand, countInStock, description },
+        { ...product, name, slug, price, image, isFeatured, featuredImage, category, brand, countInStock, description },
         {
           headers: { authorization: `Bearer ${userInfo.token}` },
         },
@@ -155,6 +165,8 @@ const ProductEditPage: NextPage<Props> = ({ id }: Props) => {
             setValue('slug', data.slug);
             setValue('price', data.price);
             setValue('image', data.image);
+            setValue('featuredImage', data.featuredImage);
+            setIsFeatured(data.isFeatured);
             setValue('category', data.category);
             setValue('brand', data.brand);
             setValue('countInStock', data.countInStock);
@@ -246,7 +258,7 @@ const ProductEditPage: NextPage<Props> = ({ id }: Props) => {
                 >
                   <fieldset
                     style={{ margin: 0, padding: 0, border: 'transparent' }}
-                    disabled={loading || loadingUpload}
+                    disabled={loading || loadingUpload || loadingUploadFeatured}
                   >
                     <List>
                       <ListItem>
@@ -339,10 +351,70 @@ const ProductEditPage: NextPage<Props> = ({ id }: Props) => {
                           variant="contained"
                           component="label"
                           color="secondary"
-                          disabled={loading || loadingUpload}
+                          disabled={loading || loadingUpload || loadingUploadFeatured}
                         >
                           {loadingUpload ? <CircularProgress size={30} /> : 'Upload Image'}
-                          <input type="file" onChange={uploadHandler} hidden />
+                          <input
+                            type="file"
+                            onChange={(e): void => {
+                              uploadHandler(e, 'image');
+                            }}
+                            hidden
+                          />
+                        </Button>
+                      </ListItem>
+                      <ListItem>
+                        <FormControlLabel
+                          label={<span style={{ fontSize: '1rem' }}>Is Featured</span>}
+                          control={
+                            <CheckBox
+                              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                              onClick={(e: any): void => {
+                                setIsFeatured(e.target.checked ? 1 : 0);
+                              }}
+                              checked={isFeatured ? true : false}
+                              name="isFeatured"
+                              size="small"
+                            />
+                          }
+                          style={{ marginTop: '1rem' }}
+                        />
+                      </ListItem>
+                      <ListItem>
+                        <Controller
+                          name="featuredImage"
+                          control={control}
+                          defaultValue=""
+                          rules={{ required: isFeatured ? true : false }}
+                          render={({ field }): JSX.Element => (
+                            <TextField
+                              variant="outlined"
+                              fullWidth
+                              id="featuredImage"
+                              label="Featured Image"
+                              error={Boolean(errors.featuredImage)}
+                              helperText={errors.featuredImage ? 'Featured Image is required' : ''}
+                              {...field}
+                            />
+                          )}
+                        />
+                      </ListItem>
+                      <ListItem>
+                        <Button
+                          variant="contained"
+                          component="label"
+                          color="secondary"
+                          disabled={loading || loadingUpload || loadingUploadFeatured}
+                          style={{ marginBottom: '1rem' }}
+                        >
+                          {loadingUploadFeatured ? <CircularProgress size={30} /> : 'Upload Image'}
+                          <input
+                            type="file"
+                            onChange={(e): void => {
+                              uploadHandler(e, 'featuredImage');
+                            }}
+                            hidden
+                          />
                         </Button>
                       </ListItem>
                       <ListItem>
@@ -436,7 +508,7 @@ const ProductEditPage: NextPage<Props> = ({ id }: Props) => {
                           variant="contained"
                           color="primary"
                           type="submit"
-                          disabled={loading || loadingUpload}
+                          disabled={loading || loadingUpload || loadingUploadFeatured}
                           fullWidth
                         >
                           {loading ? <CircularProgress size={30} /> : 'Update'}
@@ -473,7 +545,7 @@ const ProductEditPage: NextPage<Props> = ({ id }: Props) => {
         />
       ) : (
         <StyledForm className={`${PREFIX}-form`} onSubmit={handleSubmit(submitHandler)}>
-          <fieldset style={{ margin: 0, padding: 0, border: 'transparent' }} disabled={loading}>
+          <fieldset style={{ margin: 0, padding: 0, border: 'transparent' }}>
             <List>
               <ListItem>
                 <Skeleton variant="rectangular" height="4rem" width="100%" />
