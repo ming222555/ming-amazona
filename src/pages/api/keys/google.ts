@@ -8,7 +8,7 @@ const handler = nc<NextApiRequest, NextApiResponse>({
   onError,
   onNoMatch,
 });
-// handler.use(isAuth);
+handler.use(isAuth);
 
 handler.get(async (req, res) => {
   res.send(process.env.GOOGLE_API_KEY || 'nokey');
