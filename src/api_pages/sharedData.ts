@@ -17,4 +17,12 @@ export const initialShippingAddressState: IFShippingAddress = {
   city: '',
   postalCode: '',
   country: '',
+  location: {
+    lat: 0,
+    lng: 0,
+    address: '',
+    name: '',
+    vicinity: '',
+    googleAddressId: '',
+  },
 };

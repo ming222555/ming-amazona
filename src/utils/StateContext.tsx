@@ -51,8 +51,13 @@ function reducer(state: IFState, action: IFAction): IFState {
     case 'SET_CART_ITEMS':
       return { ...state, cart: { ...state.cart, cartItems: action.payload } };
     case 'SAVE_SHIPPING_ADDRESS':
-      cookieSet('shippingAddress', action.payload);
-      return { ...state, cart: { ...state.cart, shippingAddress: action.payload } };
+      const newShippingAddress = { ...state.cart.shippingAddress, ...action.payload };
+      cookieSet('shippingAddress', newShippingAddress);
+      return { ...state, cart: { ...state.cart, shippingAddress: newShippingAddress } };
+    case 'SAVE_SHIPPING_ADDRESS_MAP_LOCATION':
+      const newShippingAddress2 = { ...state.cart.shippingAddress, location: action.payload };
+      cookieSet('shippingAddress', newShippingAddress2);
+      return { ...state, cart: { ...state.cart, shippingAddress: newShippingAddress2 } };
     case 'SET_SHIPPING_ADDRESS':
       return { ...state, cart: { ...state.cart, shippingAddress: action.payload } };
     case 'CART_CLEAR':

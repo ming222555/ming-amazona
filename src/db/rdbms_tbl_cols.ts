@@ -54,12 +54,22 @@ export interface IFOrderItem {
   price: number;
 }
 
+export interface IFMapLocation {
+  lat: number;
+  lng: number;
+  address: string;
+  name: string;
+  vicinity: string;
+  googleAddressId: string;
+}
+
 export interface IFShippingAddress {
   fullName: string;
   address: string;
   city: string;
   postalCode: string;
   country: string;
+  location?: IFMapLocation;
 }
 
 export interface IFOrder {

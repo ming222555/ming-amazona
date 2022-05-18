@@ -12,7 +12,7 @@ import StateContext from '../utils/StateContext';
 import { getError } from '../utils/error/frontend/error';
 import styles from '../scss/google-map.module.scss';
 
-const defaultLocation = { lat: 999, lng: 999 };
+const defaultLocation = { lat: 0, lng: 0 };
 const libs: ('drawing' | 'geometry' | 'localContext' | 'places' | 'visualization')[] = ['places'];
 
 const mapContainerStyle = { height: '100%', width: '100%' };
@@ -21,7 +21,12 @@ const GoogleMapPage: NextPage = () => {
   const router = useRouter();
 
   const { state, dispatch } = useContext(StateContext);
-  const { userInfo } = state;
+  const {
+    userInfo,
+    cart: {
+      shippingAddress: { location: locationFromState },
+    },
+  } = state;
 
   const [alert, setAlert] = useState({
     open: false,
@@ -38,7 +43,6 @@ const GoogleMapPage: NextPage = () => {
           headers: { authorization: `Bearer ${userInfo.token}` },
         });
         setGoogleApiKey(data);
-        getUserCurrentLocation();
       } catch (err: unknown) {
         setAlert({
           open: true,
@@ -50,6 +54,24 @@ const GoogleMapPage: NextPage = () => {
     fetchGoogleApiKey();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  useEffect((): void => {
+    if (googleApiKey) {
+      if (locationFromState && locationFromState.lat !== 0 && locationFromState.lng !== 0) {
+        setCenter({
+          lat: locationFromState.lat,
+          lng: locationFromState.lng,
+        });
+        setLocation({
+          lat: locationFromState.lat,
+          lng: locationFromState.lng,
+        });
+      } else {
+        getUserCurrentLocation();
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [googleApiKey]);
 
   const [center, setCenter] = useState(defaultLocation);
   const [location, setLocation] = useState(center);
@@ -138,7 +160,7 @@ const GoogleMapPage: NextPage = () => {
 
   return (
     <>
-      {googleApiKey && center.lat !== 999 ? (
+      {googleApiKey && center.lat !== 0 ? (
         <div className={styles.googleMapBox}>
           <LoadScript libraries={libs} googleMapsApiKey={googleApiKey}>
             <GoogleMap

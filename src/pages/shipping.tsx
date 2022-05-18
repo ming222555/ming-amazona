@@ -41,6 +41,7 @@ const ShippingPage: NextPage = () => {
     control,
     formState: { errors },
     setValue,
+    getValues,
   } = useForm<IFFormData>();
 
   const { dispatch, state } = useContext(StateContext);
@@ -54,12 +55,19 @@ const ShippingPage: NextPage = () => {
   const submitHandler = ({ fullName, address, city, postalCode, country }: IFFormData): void => {
     dispatch({
       type: 'SAVE_SHIPPING_ADDRESS',
-      payload: { fullName, address, city, postalCode, country } as IFShippingAddress,
+      payload: {
+        fullName: fullName.trim(),
+        address: address.trim(),
+        city: city.trim(),
+        postalCode: postalCode.trim(),
+        country: country.trim(),
+      } as IFShippingAddress,
     });
     router.push('/payment');
   };
 
   const hasMount = useRef(false);
+  const location = useRef<{ lat: number; lng: number } | null>(null);
 
   useEffect(() => {
     if (!hasMount.current) {
@@ -74,10 +82,27 @@ const ShippingPage: NextPage = () => {
         setValue('city', shippingAddress.city);
         setValue('postalCode', shippingAddress.postalCode);
         setValue('country', shippingAddress.country);
+        location.current = {
+          lat: shippingAddress.location ? shippingAddress.location.lat : 0,
+          lng: shippingAddress.location ? shippingAddress.location.lng : 0,
+        };
         dispatch({ type: 'SET_SHIPPING_ADDRESS', payload: JSON.parse(szCookieShippingAddress) });
       }
     }
   }, [dispatch, setValue]);
+
+  const chooseLocationHandler = (): void => {
+    const fullName = getValues('fullName').trim();
+    const address = getValues('address').trim();
+    const city = getValues('city').trim();
+    const postalCode = getValues('postalCode').trim();
+    const country = getValues('country').trim();
+    dispatch({
+      type: 'SAVE_SHIPPING_ADDRESS',
+      payload: { fullName, address, city, postalCode, country } as IFShippingAddress,
+    });
+    router.push('/google-map');
+  };
 
   return (
     <Layout title="Shipping Address">
@@ -219,6 +244,18 @@ const ShippingPage: NextPage = () => {
                     />
                   )}
                 />
+              </ListItem>
+              <ListItem>
+                <Button variant="contained" color="secondary" type="button" onClick={chooseLocationHandler}>
+                  Choose on map
+                </Button>
+                &nbsp;
+                <Typography>
+                  {location.current &&
+                    location.current.lat !== 0 &&
+                    location.current.lng !== 0 &&
+                    `${location.current.lat}, ${location.current.lng}`}
+                </Typography>
               </ListItem>
               <ListItem>
                 <Button variant="contained" color="primary" type="submit" fullWidth>
