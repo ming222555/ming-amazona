@@ -83,7 +83,7 @@ const products: IFProductWithoutMongo[] = [
     slug: 'fit-pants',
     category: 'Pants',
     image: '/images/pants2.jpg',
-    isFeatured: 1,
+    isFeatured: 0,
     featuredImage: '',
     price: 100,
     brand: 'Zara',

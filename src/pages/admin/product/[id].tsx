@@ -11,7 +11,7 @@ import CircularProgress from '@mui/material/CircularProgress';
 import Skeleton from '@mui/material/Skeleton';
 import Button from '@mui/material/Button';
 import FormControlLabel from '@mui/material/FormControlLabel';
-import CheckBox from '@mui/material/CheckBox';
+import Checkbox from '@mui/material/Checkbox';
 import { styled } from '@mui/material/styles';
 
 import axios from 'axios';
@@ -367,7 +367,7 @@ const ProductEditPage: NextPage<Props> = ({ id }: Props) => {
                         <FormControlLabel
                           label={<span style={{ fontSize: '1rem' }}>Is Featured</span>}
                           control={
-                            <CheckBox
+                            <Checkbox
                               // eslint-disable-next-line @typescript-eslint/no-explicit-any
                               onClick={(e: any): void => {
                                 setIsFeatured(e.target.checked ? 1 : 0);
