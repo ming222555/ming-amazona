@@ -160,7 +160,7 @@ const GoogleMapPage: NextPage = () => {
 
   return (
     <>
-      {googleApiKey && center.lat !== 0 ? (
+      {googleApiKey && center.lat !== 0 && center.lng !== 0 ? (
         <div className={styles.googleMapBox}>
           <LoadScript libraries={libs} googleMapsApiKey={googleApiKey}>
             <GoogleMap

@@ -28,6 +28,7 @@ import { IFOrder } from '../../db/rdbms_tbl_cols';
 import StateContext from '../../utils/StateContext';
 import { getError } from '../../utils/error/frontend/error';
 import StyledCard from '../../components/shared/StyledCard';
+import Link from '../../components/shared/Link';
 
 interface Props {
   id: string;
@@ -177,6 +178,15 @@ const OrderPage: NextPage<Props> = ({ id }: Props) => {
     }
   };
 
+  const lat = order?.shippingAddress.location?.lat + '';
+  const lng = order?.shippingAddress.location?.lng + '';
+
+  let isNullPoint = false;
+
+  if (lat === '0' && lng === '0') {
+    isNullPoint = true;
+  }
+
   return (
     <Layout title="Order">
       <Typography variant="h1">Order {id}</Typography>
@@ -194,6 +204,16 @@ const OrderPage: NextPage<Props> = ({ id }: Props) => {
                       {order.shippingAddress.fullName}, {order.shippingAddress.address}, {order.shippingAddress.city},
                       {order.shippingAddress.postalCode}, {order.shippingAddress.country}
                     </Typography>
+                    &nbsp;
+                    {order.shippingAddress.location && !isNullPoint && (
+                      <Link
+                        variant="button"
+                        target="_new"
+                        href={`https://maps.google.com?q=${order.shippingAddress.location.lat},${order.shippingAddress.location.lng}`}
+                      >
+                        Show On Map
+                      </Link>
+                    )}
                   </ListItem>
                   <ListItem>
                     <Typography component="span" style={{ fontSize: '1rem' }}>

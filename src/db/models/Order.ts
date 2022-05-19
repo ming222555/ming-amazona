@@ -16,6 +16,14 @@ const orderSchema = new mongoose.Schema({
     city: { type: String, required: true },
     postalCode: { type: String, required: true },
     country: { type: String, required: true },
+    location: {
+      lat: String,
+      lng: String,
+      address: String,
+      name: String,
+      vicinity: String,
+      googleAddressId: String,
+    },
   },
   paymentMode: { type: String, required: true },
   paymentPayPalResult: {
