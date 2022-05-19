@@ -76,7 +76,7 @@ const ProfilePage: NextPage = () => {
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { data } = await axios.put<IFTokenUser>(
         `/api/users/profile`,
-        { ...profile, name, email, password },
+        { ...profile, name: name.trim(), email: email.trim(), password },
         {
           headers: { authorization: `Bearer ${userInfo.token}` },
         },
@@ -115,6 +115,7 @@ const ProfilePage: NextPage = () => {
             headers: { authorization: `Bearer ${userInfo.token}` },
           });
           setValue('name', data.name);
+          setValue('email', ''); // for fixing bug... to reveal bug, edit email with preceding spaces. Click UPDATE
           setValue('email', data.email);
           setProfile(data);
         } catch (err: unknown) {
