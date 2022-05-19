@@ -12,7 +12,7 @@ import StateContext from '../utils/StateContext';
 import { getError } from '../utils/error/frontend/error';
 import styles from '../scss/google-map.module.scss';
 
-const defaultLocation = { lat: 0, lng: 0 };
+const defaultLocation = { lat: 1.3, lng: 103.7 };
 const libs: ('drawing' | 'geometry' | 'localContext' | 'places' | 'visualization')[] = ['places'];
 
 const mapContainerStyle = { height: '100%', width: '100%' };
@@ -37,6 +37,15 @@ const GoogleMapPage: NextPage = () => {
   const [googleApiKey, setGoogleApiKey] = useState('');
 
   useEffect((): void => {
+    if (!navigator.geolocation) {
+      setAlert({
+        open: true,
+        message: 'Geolocation is not supported by this browser',
+        backgroundColor: '#FF3232',
+      });
+      return;
+    }
+
     const fetchGoogleApiKey = async (): Promise<void> => {
       try {
         const { data } = await axios.get<string>('/api/keys/google', {
@@ -66,8 +75,6 @@ const GoogleMapPage: NextPage = () => {
           lat: locationFromState.lat,
           lng: locationFromState.lng,
         });
-      } else {
-        getUserCurrentLocation();
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -75,27 +82,6 @@ const GoogleMapPage: NextPage = () => {
 
   const [center, setCenter] = useState(defaultLocation);
   const [location, setLocation] = useState(center);
-
-  const getUserCurrentLocation = (): void => {
-    if (!navigator.geolocation) {
-      setAlert({
-        open: true,
-        message: 'Geolocation is not supported by this browser',
-        backgroundColor: '#FF3232',
-      });
-      return;
-    }
-    navigator.geolocation.getCurrentPosition((position) => {
-      setCenter({
-        lat: position.coords.latitude,
-        lng: position.coords.longitude,
-      });
-      setLocation({
-        lat: position.coords.latitude,
-        lng: position.coords.longitude,
-      });
-    });
-  };
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const mapRef = useRef<any>(null);
@@ -160,7 +146,8 @@ const GoogleMapPage: NextPage = () => {
 
   return (
     <>
-      {googleApiKey && center.lat !== 0 && center.lng !== 0 ? (
+      {/* https://stackoverflow.com/questions/26771549/javascript-google-maps-api-loading-in-web-browser-but-not-android-browser */}
+      {googleApiKey ? (
         <div className={styles.googleMapBox}>
           <LoadScript libraries={libs} googleMapsApiKey={googleApiKey}>
             <GoogleMap
