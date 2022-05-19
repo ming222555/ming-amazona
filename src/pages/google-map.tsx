@@ -18,6 +18,28 @@ const libs: ('drawing' | 'geometry' | 'localContext' | 'places' | 'visualization
 const mapContainerStyle = { height: '100%', width: '100%' };
 
 const GoogleMapPage: NextPage = () => {
+  /* navigator.geolocation.getCurrentPosition(
+    (position) => {
+      setCenter({
+        lat: position.coords.latitude,
+        lng: position.coords.longitude,
+      });
+      setLocation({
+        lat: position.coords.latitude,
+        lng: position.coords.longitude,
+      });
+    },
+    (error) => {
+      // On android chrome, ...
+      //   error ->  "GeolocationPositionError {code: 1, message: 'Only secure origins are allowed (see: https://goo.gl/Y0ZkNV).'}"
+      //   error is obtained by
+      //     1. inspecting android chrome by usb connecting mobile to desktop via usb2 cable LG Phone charger to hp usb2 port
+      //     2. ref https://developer.chrome.com/docs/devtools/remote-debugging/
+      // eslint-disable-next-line no-console
+      console.log('err', error);
+    },
+    { enableHighAccuracy: false, timeout: 6000 },
+  ); */
   const router = useRouter();
 
   const { state, dispatch } = useContext(StateContext);
