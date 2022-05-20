@@ -250,7 +250,7 @@ const ShippingPage: NextPage = () => {
                   Choose on map
                 </Button>
                 &nbsp;
-                <Typography>
+                <Typography style={{ fontSize: '1rem' }}>
                   {location.current &&
                     location.current.lat !== 0 &&
                     location.current.lng !== 0 &&

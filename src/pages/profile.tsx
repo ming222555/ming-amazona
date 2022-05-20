@@ -71,12 +71,32 @@ const ProfilePage: NextPage = () => {
         return;
       }
     }
+    const nameTrim = name.trim();
+    const emailTrim = email.trim();
+
+    if (!nameTrim) {
+      setAlert({
+        open: true,
+        message: 'Name cannot be blank',
+        backgroundColor: '#FF3232',
+      });
+      return;
+    }
+    if (!emailTrim) {
+      setAlert({
+        open: true,
+        message: 'Email cannot be blank',
+        backgroundColor: '#FF3232',
+      });
+      return;
+    }
+
     try {
       setLoading(true);
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { data } = await axios.put<IFTokenUser>(
         `/api/users/profile`,
-        { ...profile, name: name.trim(), email: email.trim(), password },
+        { ...profile, name: nameTrim, email: emailTrim, password },
         {
           headers: { authorization: `Bearer ${userInfo.token}` },
         },
