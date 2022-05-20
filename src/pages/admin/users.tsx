@@ -29,6 +29,7 @@ import StateContext from '../../utils/StateContext';
 import Link from '../../components/shared/Link';
 import { getError } from '../../utils/error/frontend/error';
 import StyledCard from '../../components/shared/StyledCard';
+import demo from '../../demo';
 
 const PREFIX = 'AdminUsersPage';
 
@@ -142,6 +143,15 @@ const AdminUsersPage: NextPage = () => {
   const deletedUser = useRef<true | null>(null);
 
   const deleteHandler = async (userId: string): Promise<void> => {
+    if (demo) {
+      setAlert({
+        open: true,
+        message: `Website for demo only. Deletion of user not allowed.`,
+        backgroundColor: '#FF3232',
+      });
+      return;
+    }
+
     try {
       setLoadingDelete(true);
       await axios.delete(`/api/admin/users/${userId}`, {

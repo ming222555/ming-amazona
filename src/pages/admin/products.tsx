@@ -29,6 +29,7 @@ import StateContext from '../../utils/StateContext';
 import Link from '../../components/shared/Link';
 import { getError } from '../../utils/error/frontend/error';
 import StyledCard from '../../components/shared/StyledCard';
+import demo from '../../demo';
 
 const PREFIX = 'AdminProductsPage';
 
@@ -144,6 +145,15 @@ const AdminProductsPage: NextPage = () => {
   const createdId = useRef('');
 
   const createHandler = async (): Promise<void> => {
+    if (demo) {
+      setAlert({
+        open: true,
+        message: `Website for demo only. Creation of product not allowed.`,
+        backgroundColor: '#FF3232',
+      });
+      return;
+    }
+
     try {
       setLoadingCreate(true);
       const { data } = await axios.post<{ _id: string }>(
@@ -173,6 +183,15 @@ const AdminProductsPage: NextPage = () => {
   const deletedProduct = useRef<true | null>(null);
 
   const deleteHandler = async (productId: string): Promise<void> => {
+    if (demo) {
+      setAlert({
+        open: true,
+        message: `Website for demo only. Deletion of product not allowed.`,
+        backgroundColor: '#FF3232',
+      });
+      return;
+    }
+
     try {
       setLoadingDelete(true);
       await axios.delete(`/api/admin/products/${productId}`, {

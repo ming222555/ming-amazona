@@ -23,6 +23,7 @@ import { IFProduct } from '../../../db/rdbms_tbl_cols';
 import StateContext from '../../../utils/StateContext';
 import Link from '../../../components/shared/Link';
 import { getError } from '../../../utils/error/frontend/error';
+import demo from '../../../demo';
 
 const PREFIX = 'ProductEditPage';
 
@@ -85,6 +86,15 @@ const ProductEditPage: NextPage<Props> = ({ id }: Props) => {
     const fileBlobString = tmp as string;
     const bodyFormData = new FormData();
     bodyFormData.append('file', fileBlobString);
+    if (demo) {
+      setAlert({
+        open: true,
+        message: `Website for demo only. Upload Image not allowed.`,
+        backgroundColor: '#FF3232',
+      });
+      return;
+    }
+
     try {
       imageField === 'image' ? setLoadingUpload(true) : setLoadingUploadFeatured(true);
       const { data } = await axios.post(`/api/admin/upload`, bodyFormData, {
@@ -118,6 +128,15 @@ const ProductEditPage: NextPage<Props> = ({ id }: Props) => {
     countInStock,
     description,
   }: IFFormData): Promise<void> => {
+    if (demo) {
+      setAlert({
+        open: true,
+        message: `Website for demo only. Update of product not allowed.`,
+        backgroundColor: '#FF3232',
+      });
+      return;
+    }
+
     try {
       setLoading(true);
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -544,7 +563,7 @@ const ProductEditPage: NextPage<Props> = ({ id }: Props) => {
           autoHideDuration={4000}
         />
       ) : (
-        <StyledForm className={`${PREFIX}-form`} onSubmit={handleSubmit(submitHandler)}>
+        <StyledForm className={`${PREFIX}-form`}>
           <fieldset style={{ margin: 0, padding: 0, border: 'transparent' }}>
             <List>
               <ListItem>

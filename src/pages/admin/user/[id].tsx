@@ -23,6 +23,7 @@ import { IFUser } from '../../../db/rdbms_tbl_cols';
 import StateContext from '../../../utils/StateContext';
 import Link from '../../../components/shared/Link';
 import { getError } from '../../../utils/error/frontend/error';
+import demo from '../../../demo';
 
 const PREFIX = 'UserEditPage';
 
@@ -73,6 +74,15 @@ const UserEditPage: NextPage<Props> = ({ id }: Props) => {
   const router = useRouter();
 
   const submitHandler = async ({ name }: IFFormData): Promise<void> => {
+    if (demo) {
+      setAlert({
+        open: true,
+        message: `Website for demo only. Update of user not allowed.`,
+        backgroundColor: '#FF3232',
+      });
+      return;
+    }
+
     try {
       setLoading(true);
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -271,7 +281,7 @@ const UserEditPage: NextPage<Props> = ({ id }: Props) => {
           autoHideDuration={4000}
         />
       ) : (
-        <StyledForm className={`${PREFIX}-form`} onSubmit={handleSubmit(submitHandler)}>
+        <StyledForm className={`${PREFIX}-form`}>
           <fieldset style={{ margin: 0, padding: 0, border: 'transparent' }} disabled={loading}>
             <List>
               <ListItem>

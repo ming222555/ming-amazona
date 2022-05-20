@@ -283,7 +283,7 @@ const ProfilePage: NextPage = () => {
           autoHideDuration={4000}
         />
       ) : (
-        <StyledForm className={`${PREFIX}-form`} onSubmit={handleSubmit(submitHandler)}>
+        <StyledForm className={`${PREFIX}-form`}>
           <fieldset style={{ margin: 0, padding: 0, border: 'transparent' }} disabled={loading}>
             <List>
               <ListItem>
