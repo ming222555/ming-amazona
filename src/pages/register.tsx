@@ -74,9 +74,33 @@ const RegisterPage: NextPage = () => {
       });
       return;
     }
+    const nameTrim = name.trim();
+    const emailTrim = email.trim();
+
+    if (!nameTrim) {
+      setAlert({
+        open: true,
+        message: 'Name cannot be blank',
+        backgroundColor: '#FF3232',
+      });
+      return;
+    }
+    if (!emailTrim) {
+      setAlert({
+        open: true,
+        message: 'Email cannot be blank',
+        backgroundColor: '#FF3232',
+      });
+      return;
+    }
+
     try {
       setLoading(true);
-      const { data } = await axios.post<IFTokenUser>('/api/users/register', { name, email, password });
+      const { data } = await axios.post<IFTokenUser>('/api/users/register', {
+        name: nameTrim,
+        email: emailTrim,
+        password,
+      });
       dispatch({ type: 'USER_LOGIN', payload: data });
     } catch (err: unknown) {
       setLoading(false);
