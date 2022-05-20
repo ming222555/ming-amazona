@@ -89,8 +89,6 @@ const SearchPage: NextPage<Props> = ({ products, countProducts, categories, bran
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const pageHandler = (e: any, page: any): void => {
-    // eslint-disable-next-line no-console
-    console.log('pageeeee', page);
     filterSearch({ page });
   };
 

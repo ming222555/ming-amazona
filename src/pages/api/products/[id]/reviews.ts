@@ -48,6 +48,7 @@ handler.use(isAuth).post(async (req, res) => {
       const product2 = await Product.findById(req.query.id);
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       product2.rating = product2.reviews.reduce((a: any, c: any) => c.rating + a, 0) / product2.reviews.length;
+      product2.rating = Math.round(product2.rating);
       await product2.save();
 
       await db.disconnect();
@@ -63,6 +64,7 @@ handler.use(isAuth).post(async (req, res) => {
       product.numReviews = product.reviews.length;
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       product.rating = product.reviews.reduce((a: any, c: any) => c.rating + a, 0) / product.reviews.length;
+      product.rating = Math.round(product.rating);
       await product.save();
       await db.disconnect();
       res.status(201).send({ message: 'Review submitted successfully' });
