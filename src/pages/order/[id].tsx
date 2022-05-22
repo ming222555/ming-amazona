@@ -17,6 +17,7 @@ import CircularProgress from '@mui/material/CircularProgress';
 import Divider from '@mui/material/Divider';
 import Skeleton from '@mui/material/Skeleton';
 import Button from '@mui/material/Button';
+import { useTheme } from '@mui/material/styles';
 
 import axios from 'axios';
 import Cookies from 'js-cookie';
@@ -187,6 +188,8 @@ const OrderPage: NextPage<Props> = ({ id }: Props) => {
     isNullPoint = true;
   }
 
+  const theme = useTheme();
+
   return (
     <Layout title="Order">
       <Typography variant="h1">Order {id}</Typography>
@@ -199,7 +202,16 @@ const OrderPage: NextPage<Props> = ({ id }: Props) => {
                   <ListItem>
                     <Typography variant="h2">Shipping Address</Typography>
                   </ListItem>
-                  <ListItem>
+                  <ListItem
+                    sx={{
+                      '&': {
+                        flexDirection: 'column',
+                        [theme.breakpoints.up(540)]: {
+                          flexDirection: 'row',
+                        },
+                      },
+                    }}
+                  >
                     <Typography component="span" style={{ fontSize: '1rem' }}>
                       {order.shippingAddress.fullName}, {order.shippingAddress.address}, {order.shippingAddress.city},
                       {order.shippingAddress.postalCode}, {order.shippingAddress.country}
