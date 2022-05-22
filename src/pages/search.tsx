@@ -228,7 +228,7 @@ const SearchPage: NextPage<Props> = ({ products, countProducts, categories, bran
             {/* <div style={{ paddingLeft: '2rem', marginLeft: 'auto', background: 'lightblue' }}>Sort box</div> */}
             <div style={{ paddingLeft: '2rem', marginLeft: 'auto' }}>
               <Typography style={fontSize1rem}>
-                <strong>Sort by</strong> {Math.random()}
+                <strong>Sort by</strong>
               </Typography>
               <Select fullWidth variant="standard" value={sort as string} onChange={sortHandler} style={fontSize1rem}>
                 <MenuItem style={fontSize1rem} value="featured">

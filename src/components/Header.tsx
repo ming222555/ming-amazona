@@ -38,8 +38,8 @@ const StyledAppBar = styled(AppBar)(({ theme }) => ({
     [`& .${PREFIX}-navbar__middle`]: {
       flex: '1 1 auto',
       display: 'none',
-      [theme.breakpoints.up('md')]: {
-        display: 'block',
+      [theme.breakpoints.up('sm')]: {
+        /* md */ display: 'block',
       },
     },
     [`& .${PREFIX}-searchForm`]: {
