@@ -363,6 +363,15 @@ const OrderPage: NextPage<Props> = ({ id }: Props) => {
                             onApprove={onApprove}
                             onError={onError}
                           ></PayPalButtons>
+                          <Typography style={{ fontSize: '1rem', marginBottom: '1rem' }}>
+                            <strong>NOTE</strong> As website is for demo only, please use below Email and Password when
+                            logging in to PayPal.
+                          </Typography>
+                          <Typography component="span" style={{ fontSize: '.8rem' }}>
+                            sb-urtkj15956255@personal.example.com
+                            <br />
+                            J%^i[1TX
+                          </Typography>
                         </div>
                       )}
                     </ListItem>
