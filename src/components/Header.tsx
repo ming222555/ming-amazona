@@ -175,6 +175,12 @@ export default function Header(): JSX.Element {
     }
   }, [dispatch]);
 
+  useEffect(() => {
+    if (state.searchQuery > 0) {
+      setSearchQuery('');
+    }
+  }, [state.searchQuery]);
+
   const [sidebarVisible, setSidebarVisible] = useState(false);
   const sidebarOpenHandler = (): void => {
     setSidebarVisible(true);
@@ -217,6 +223,7 @@ export default function Header(): JSX.Element {
                 </InputAdornment>
               }
               fullWidth
+              value={searchQuery}
             />
           </form>
         </div>

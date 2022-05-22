@@ -10,12 +10,14 @@ interface IFState {
   darkMode: boolean;
   cart: { cartItems: IFCartItem[]; shippingAddress: IFShippingAddress };
   userInfo: IFTokenUser;
+  searchQuery: number;
 }
 
 const initialState: IFState = {
   darkMode: false,
   cart: { cartItems: initialCartItemsState, shippingAddress: initialShippingAddressState },
   userInfo: initialTokenUserState,
+  searchQuery: 0,
 };
 
 interface IFAction {
@@ -75,6 +77,8 @@ function reducer(state: IFState, action: IFAction): IFState {
         userInfo: initialTokenUserState,
         cart: { cartItems: initialCartItemsState, shippingAddress: initialShippingAddressState },
       };
+    case 'SEARCH_QUERY_ACTIVATE_CLEAR':
+      return { ...state, searchQuery: Math.random() };
     default:
       return state;
   }
