@@ -14,7 +14,7 @@ const signToken = (user: IFUser): string => {
     },
     process.env.JWT_SECRET as string,
     {
-      expiresIn: '30d',
+      expiresIn: '1d',
     },
   );
 };
@@ -28,7 +28,12 @@ export const isAuth = async (req: NextApiRequest, res: NextApiResponse, next: an
     const token = authorization.slice(7, authorization.length);
     jwt.verify(token, process.env.JWT_SECRET as string, (err, decode) => {
       if (err) {
-        res.status(status).send({ errormsg: 'Invalid token', status });
+        if (err.name === 'TokenExpiredError') {
+          res.status(status).send({ errormsg: 'Session has expired. Please logout and re-login', status });
+        } else {
+          res.status(status).send({ errormsg: 'Invalid token', status });
+        }
+        return;
       } else {
         if (!req.body) {
           req.body = {};
