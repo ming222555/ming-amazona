@@ -1,14 +1,76 @@
-.DialogBody {
-  /////////// padding: 1rem;
-}
-// .Actions {
-//     display: flex;
-//     justify-content: flex-end;
 
-//     .Action {
-//         &.ActionYes {
-//         }
-//         &.ActionNo {
-//         }
-//     }
-// }
+$categories_color: white;
+$categories_paddingtop: 4rem;
+$categories_paddingright: 4rem;
+$categories_paddingbottom: 4rem;
+$categories_paddingleft: 4rem;
+$categories_minheight: 64vh;
+
+/////////////// $category__tabheight: 1.6px + 1.6px + .25rem + .25rem + 1rem;
+
+$category__tabtext_borderwidth: 1.6px;
+
+$category__tabtext_paddingx: .5rem;
+$category__tabtext_paddingy: .5rem;
+
+$category__tabtext_hoverbordercolor: white;
+$category__tabtext_fontsize: 1rem;
+
+$category__tabtext_zindex: 3;
+$category__tabpane_zindex: 2;
+$category__tabpane_padding: 1rem;
+
+.DialogInfo {
+  &.categories {
+    font-size: 1rem;
+    background: gray;
+    position: relative;
+    color: $categories_color;
+    padding: $categories_paddingtop;
+    min-height: $categories_minheight;
+
+    min-width: 40vw;
+    max-width: 50vw;
+  }
+  .category__tabs {
+    background: lightgray;
+  }
+  .category__tab {
+    --category__tabheight: calc((#{$category__tabtext_borderwidth} * 2) + (#{$category__tabtext_paddingy} * 2) + #{$category__tabtext_fontsize});
+    background: lightblue;
+    display: inline-flex;
+    height: var(--category__tabheight);
+  }
+  .category__tabtext {
+    background: orange;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: $category__tabtext_borderwidth solid transparent; // black
+    padding: 0 $category__tabtext_paddingx;
+    font-size: inherit;
+    &.active {
+      z-index: $category__tabtext_zindex; // default is auto
+      border-right-color: transparent;
+      border-left-color: $category__tabtext_hoverbordercolor;
+      border-top-color: $category__tabtext_hoverbordercolor;
+      border-right-color: $category__tabtext_hoverbordercolor;
+    }
+  }
+  .category__tabpane {
+    background: rgb(144,238,144);
+    position: absolute;
+    z-index: $category__tabpane_zindex;
+    border: $category__tabtext_borderwidth solid $category__tabtext_hoverbordercolor;
+    // top: calc(#{$categories_paddingtop} + #{1 * $category__tabtext_borderwidth} + #{2 * $category__tabtext_padding} + #{$category__tabtext_fontsize});
+    top: calc(#{$categories_paddingtop} + var(--category__tabheight) - #{$category__tabtext_borderwidth});
+    left: $categories_paddingleft;
+    right: $categories_paddingright;
+    bottom: $categories_paddingbottom;
+    visibility: hidden;
+    padding: $category__tabpane_padding;
+  }
+  .category__tabtext.active + .category__tabpane {
+    visibility: visible;
+  }
+}
