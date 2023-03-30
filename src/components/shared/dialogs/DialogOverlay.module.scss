@@ -1,0 +1,33 @@
+/* @import "bootstrap/scss/functions";
+@import "bootstrap/scss/variables"; */
+
+.DialogOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    background: rgba( 0,0,0,.1);
+
+    // high z index to counter 3rd party react-paginate library whose page buttons have z index 3
+    z-index: 666888;
+    
+    .DialogBodyPadded {
+        background: #fff;
+        padding: 1rem;
+    
+        -webkit-box-shadow: 0 0 .75rem .75rem #ccc;  /* Safari 3-4, iOS 4.0.2 - 4.2, Android 2.3+ */
+        -moz-box-shadow:    0 0 .75rem .75rem #ccc;  /* Firefox 3.5 - 3.6 */
+        box-shadow:         0 0 .75rem .75rem #ccc;  /* Opera 10.5, IE 9, Firefox 4+, Chrome 6+, iOS 5 */
+
+        width: 80%;
+
+        // @include media-breakpoint-up(md) {
+        //     width: 50%;
+        // };
+        /* max-width: map-get($grid-breakpoints, lg); */
+    }
+}
