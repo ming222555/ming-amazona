@@ -81,7 +81,7 @@ export default function ProductItem({ product, loadingAddToCart, addToCartHandle
           )}
         </CardActions>
       </Card>
-      {productToShowmore && <DialogInfo onCancel={(): void => setProductToShowmore(null)} info={'helloworld'} />}
+      {productToShowmore && <DialogInfo onCancel={(): void => setProductToShowmore(null)} info={product.name} />}
     </>
   );
 }

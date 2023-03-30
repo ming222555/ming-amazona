@@ -6,8 +6,6 @@ $categories_paddingbottom: 2rem;
 $categories_paddingleft: 2rem;
 $categories_minheight: 64vh;
 
-/////////////// $category__tabheight: 1.6px + 1.6px + .25rem + .25rem + 1rem;
-
 $category__tabtext_borderwidth: 1.5px; // 1.6px;
 
 $category__tabtext_paddingx: .5rem;
@@ -40,7 +38,6 @@ $category__tabpane_padding: 1rem;
   }
   .category__tab {
     --category__tabheight: calc((#{$category__tabtext_borderwidth} * 2) + (#{$category__tabtext_paddingy} * 2) + #{$category__tabtext_fontsize});
-    //////////////////// background: lightblue;
     display: inline-flex;
     height: var(--category__tabheight);
   }
@@ -52,6 +49,7 @@ $category__tabpane_padding: 1rem;
     border: $category__tabtext_borderwidth solid transparent; // black
     padding: 0 $category__tabtext_paddingx;
     font-size: inherit;
+    cursor: pointer;
     &.active {
       z-index: $category__tabtext_zindex; // default is auto
       border-right-color: transparent;
