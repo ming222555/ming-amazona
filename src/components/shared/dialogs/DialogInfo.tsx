@@ -6,7 +6,7 @@ import styles from './DialogInfo.module.scss';
 export default function DialogInfo(props: { onCancel: () => void; info: string }): JSX.Element {
   return (
     <Dialog onCancel={props.onCancel}>
-      <div className={styles.DialogInfo}>
+      <div className={styles.DialogBody}>
         <p className={styles.info}>{props.info}</p>
         <div className={styles.Actions + ' p-3'}>
           <button

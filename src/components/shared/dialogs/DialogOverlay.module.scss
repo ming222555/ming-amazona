@@ -23,11 +23,24 @@
         -moz-box-shadow:    0 0 .75rem .75rem #ccc;  /* Firefox 3.5 - 3.6 */
         box-shadow:         0 0 .75rem .75rem #ccc;  /* Opera 10.5, IE 9, Firefox 4+, Chrome 6+, iOS 5 */
 
-        width: 80%;
+        // width: 80%;
+        width: auto;
+
+        border: 1px solid transparent;
+        border-radius: 4px;
 
         // @include media-breakpoint-up(md) {
         //     width: 50%;
         // };
         /* max-width: map-get($grid-breakpoints, lg); */
+
+        position: relative;
+        .xclose {
+          position: absolute;
+          top: calc(.5rem - 1px);
+          right: .5rem;
+          cursor: pointer;
+          color: #000;
+        }
     }
 }

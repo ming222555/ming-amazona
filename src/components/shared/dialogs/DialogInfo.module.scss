@@ -1,22 +1,14 @@
-.DialogQuestionYesNo {
-    font-size: 1rem;
-
-    .Title {
-        font-size: 1.25em;
-        font-weight: 500;
-    }
-    .Question {
-
-    }
-    .Actions {
-        display: flex;
-        justify-content: flex-end;
-
-        .Action {
-            &.ActionYes {
-            }
-            &.ActionNo {
-            }
-        }
-    }
+.DialogBody {
+  /////////// padding: 1rem;
 }
+// .Actions {
+//     display: flex;
+//     justify-content: flex-end;
+
+//     .Action {
+//         &.ActionYes {
+//         }
+//         &.ActionNo {
+//         }
+//     }
+// }

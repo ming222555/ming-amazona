@@ -9,16 +9,17 @@ type _Props = {
 };
 
 function DialogOverlay(props: _Props): React.ReactPortal {
+  const oncloseHandler = (e: React.MouseEvent<HTMLElement>): void => {
+    e.stopPropagation();
+    props.onCancel();
+  };
+
   return ReactDOM.createPortal(
-    <div
-      className={styles.DialogOverlay}
-      onClick={(e): void => {
-        e.stopPropagation();
-        props.onCancel();
-      }}
-    >
+    <div className={styles.DialogOverlay} onClick={oncloseHandler}>
       <div onClick={(e): void => e.stopPropagation()} className={styles.DialogBodyPadded}>
-        {' '}
+        <span className={styles.xclose} onClick={oncloseHandler}>
+          x
+        </span>
         {/* for stop propagation */}
         {props.children}
       </div>
