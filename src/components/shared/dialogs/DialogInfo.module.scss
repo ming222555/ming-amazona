@@ -6,7 +6,7 @@ $categories_paddingbottom: 2rem;
 $categories_paddingleft: 2rem;
 $categories_minheight: 64vh;
 
-$category__tabtext_borderwidth: 1.5px; // 1.6px;
+$category__tabtext_borderwidth: 7px;
 
 $category__tabtext_paddingx: .5rem;
 $category__tabtext_paddingy: .5rem;
@@ -14,8 +14,8 @@ $category__tabtext_paddingy: .5rem;
 $category__tabtext_hoverbordercolor: blue;
 $category__tabtext_fontsize: 1rem;
 
-$category__tabtext_zindex: 3;
-$category__tabpane_zindex: 2;
+//////////// $category__tabtext_zindex: 3;
+//////////////////// $category__tabpane_zindex: 2;
 $category__tabpane_padding: 1rem;
 
 .DialogInfo {
@@ -39,29 +39,35 @@ $category__tabpane_padding: 1rem;
   .category__tab {
     --category__tabheight: calc((#{$category__tabtext_borderwidth} * 2) + (#{$category__tabtext_paddingy} * 2) + #{$category__tabtext_fontsize});
     display: inline-flex;
+    flex-direction: column;
     height: var(--category__tabheight);
+    &::after {
+      content: '\00A0';
+      background: black;
+      align-self: center;
+      margin-left: $category__tabtext_borderwidth;
+      margin-right: $category__tabtext_borderwidth;
+      height: calc(#{$category__tabtext_borderwidth} * 2);
+      margin-top: calc(#{$category__tabtext_borderwidth} * -1.5);
+    }
   }
   .category__tabtext {
     background: #A0D6B4; // orange;
     display: flex;
     align-items: center;
     justify-content: center;
-    border: $category__tabtext_borderwidth solid transparent; // black
+    border: $category__tabtext_borderwidth solid $category__tabtext_hoverbordercolor;
     padding: 0 $category__tabtext_paddingx;
     font-size: inherit;
     cursor: pointer;
     &.active {
-      z-index: $category__tabtext_zindex; // default is auto
-      border-right-color: transparent;
-      border-left-color: $category__tabtext_hoverbordercolor;
-      border-top-color: $category__tabtext_hoverbordercolor;
-      border-right-color: $category__tabtext_hoverbordercolor;
+      /////////////////////// z-index: $category__tabtext_zindex; // default is auto
     }
   }
   .category__tabpane {
     background: #A0D6B4;
     position: absolute;
-    z-index: $category__tabpane_zindex;
+    /////////////// z-index: $category__tabpane_zindex;
     border: $category__tabtext_borderwidth solid $category__tabtext_hoverbordercolor;
     top: calc(#{$categories_paddingtop} + var(--category__tabheight) - #{$category__tabtext_borderwidth});
     left: $categories_paddingleft;

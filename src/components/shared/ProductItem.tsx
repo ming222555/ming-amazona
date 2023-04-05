@@ -22,10 +22,10 @@ interface IFProductItemProps {
 export default function ProductItem({ product, loadingAddToCart, addToCartHandler }: IFProductItemProps): JSX.Element {
   const [productToShowmore, setProductToShowmore] = useState<IFProduct | null>(null);
 
-  const moreHandler = (product: IFProduct | null): void => {
-    setProductToShowmore(product);
-    return;
-  };
+  // const moreHandler = (product: IFProduct | null): void => {
+  //   setProductToShowmore(product);
+  //   return;
+  // };
 
   return (
     <>
@@ -51,7 +51,7 @@ export default function ProductItem({ product, loadingAddToCart, addToCartHandle
           >
             {loadingAddToCart ? <CircularProgress size={30} /> : 'Add to cart'}
           </Button>
-          {loadingAddToCart ? null : (
+          {/* {loadingAddToCart ? null : (
             <Typography
               sx={{
                 flexGrow: 1,
@@ -78,7 +78,7 @@ export default function ProductItem({ product, loadingAddToCart, addToCartHandle
                 &#x2022;&#x2022;&#x2022;
               </span>
             </Typography>
-          )}
+          )} */}
         </CardActions>
       </Card>
       {productToShowmore && <DialogInfo onCancel={(): void => setProductToShowmore(null)} info={product.name} />}
