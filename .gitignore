@@ -32,7 +32,7 @@ yarn-error.log*
 .env.test.local
 .env.production.local
 .env-linode-*
-# .env*
+.env*
 
 _next*
 misc
@@ -45,7 +45,7 @@ misc
 
 goog.txt
 misc.txt
-# .env
+.env
 mongobin.lnk
 mongodexe.lnk
 up2here.txt
