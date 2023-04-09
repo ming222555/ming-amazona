@@ -32,6 +32,10 @@ yarn-error.log*
 .env.test.local
 .env.production.local
 .env-linode-*
+.env*
+
+_next*
+misc
 
 # vercel
 .vercel
